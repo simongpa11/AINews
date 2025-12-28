@@ -52,3 +52,18 @@
     background: #111;
     color: #fff;
 }
+
+@media (max-width: 600px) {
+    .page {
+        padding: 20px;
+    }
+
+    .cover {
+        padding: 10px;
+        border-width: 2px;
+    }
+
+    .cover h1 {
+        font-size: 2rem;
+    }
+}

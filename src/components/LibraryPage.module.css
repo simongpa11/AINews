@@ -114,3 +114,22 @@
     text-align: center;
     margin-top: 20px;
 }
+
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .newsItem {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
