@@ -21,16 +21,30 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     let fullText = newsItem.summary || ''
 
     // 1. Extract Priority and Recommendation from anywhere in the text
-    const prioMatch = fullText.match(/Prioridad:\s*(LOW|MED|HIGH|ALERT)/i)
-    const recMatch = fullText.match(/Recomendación:\s*([^\n.]+)/i)
+    // We look for "Prioridad:" or "Priority:" followed by the level
+    const prioMatch = fullText.match(/(?:Prioridad|Priority):\s*(LOW|MED|HIGH|ALERT|BAJA|MEDIA|ALTA|ALERTA)/i)
+    const recMatch = fullText.match(/(?:Recomendación|Recommendation):\s*([^\n.]+)/i)
 
-    const priority = prioMatch ? prioMatch[1] : 'MED'
+    // Map translated priorities back to standard keys if needed
+    const rawPriority = prioMatch ? prioMatch[1].toUpperCase() : 'MED'
+    const priorityMap: { [key: string]: string } = {
+        'BAJA': 'LOW',
+        'MEDIA': 'MED',
+        'ALTA': 'HIGH',
+        'ALERTA': 'ALERT'
+    }
+    const priority = priorityMap[rawPriority] || rawPriority
+
     const recommendation = recMatch ? recMatch[0] : null
 
-    // 2. Clean the text (remove priority and recommendation tags)
+    // 2. Clean the text (remove priority and recommendation tags completely)
     let cleanedText = fullText
     if (prioMatch) cleanedText = cleanedText.replace(prioMatch[0], '')
     if (recMatch) cleanedText = cleanedText.replace(recMatch[0], '')
+
+    // Also catch variations like "Prioridad Baja" without colon if they exist
+    cleanedText = cleanedText.replace(/Prioridad\s+(Baja|Media|Alta|Alerta)/gi, '')
+
     cleanedText = cleanedText.trim()
 
     // 3. Extract Lead (First 1-2 sentences of cleaned text)
