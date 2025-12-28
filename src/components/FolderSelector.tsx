@@ -55,12 +55,12 @@ export default function FolderSelector({ onSelect, onClose }: FolderSelectorProp
     return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
-                <h3>Save to...</h3>
+                <h3>Guardar en...</h3>
 
                 <div className={styles.list}>
                     <button className={styles.item} onClick={() => onSelect(null)}>
                         <FolderIcon size={16} />
-                        <span>General (No Folder)</span>
+                        <span>General (Sin Carpeta)</span>
                     </button>
 
                     {folders.map(folder => (
@@ -75,7 +75,7 @@ export default function FolderSelector({ onSelect, onClose }: FolderSelectorProp
                     <div className={styles.createForm}>
                         <input
                             type="text"
-                            placeholder="Folder Name"
+                            placeholder="Nombre de Carpeta"
                             value={newFolderName}
                             onChange={e => setNewFolderName(e.target.value)}
                             autoFocus
@@ -84,11 +84,11 @@ export default function FolderSelector({ onSelect, onClose }: FolderSelectorProp
                     </div>
                 ) : (
                     <button className={styles.createButton} onClick={() => setIsCreating(true)}>
-                        <Plus size={16} /> New Folder
+                        <Plus size={16} /> Nueva Carpeta
                     </button>
                 )}
 
-                <button className={styles.closeButton} onClick={onClose}>Cancel</button>
+                <button className={styles.closeButton} onClick={onClose}>Cancelar</button>
             </div>
         </div>
     )

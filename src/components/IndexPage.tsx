@@ -10,15 +10,15 @@ interface IndexPageProps {
 const IndexPage = forwardRef<HTMLDivElement, IndexPageProps>(({ news, onNavigate }, ref) => {
     return (
         <div className={styles.container} ref={ref}>
-            <h2 className={styles.title}>Index</h2>
+            <h2 className={styles.title}>Índice</h2>
             <ul className={styles.list}>
                 <li className={styles.item} onClick={() => onNavigate(news.length)}>
-                    <span className={styles.itemTitle} style={{ color: '#ff4d4d' }}>My Clippings (Library)</span>
+                    <span className={styles.itemTitle} style={{ color: '#ff4d4d' }}>Mis Recortes (Biblioteca)</span>
                 </li>
                 {news.map((item, index) => (
                     <li key={item.id} className={styles.item} onClick={() => onNavigate(index)}>
                         <span className={styles.itemTitle}>{item.title}</span>
-                        <span className={styles.score}>Relevance: {item.relevance_score}/10</span>
+                        <span className={styles.score}>Relevancia: {item.relevance_score}/10</span>
                     </li>
                 ))}
             </ul>

@@ -69,9 +69,9 @@ export default function Newspaper({ news }: NewspaperProps) {
                 disableFlipByClick={isMobile} // On mobile, swipe is better, click might be accidental
             >
                 <div className={styles.cover} data-density="hard">
-                    <h1>AI News Daily</h1>
-                    <p>{new Date().toLocaleDateString()}</p>
-                    <p style={{ marginTop: '20px', fontSize: '0.8rem' }}>Swipe or click to turn</p>
+                    <h1>Noticias IA Diarias</h1>
+                    <p>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <p style={{ marginTop: '20px', fontSize: '0.8rem' }}>Desliza o haz clic para pasar página</p>
                 </div>
 
                 <div className={styles.page}>
@@ -90,7 +90,7 @@ export default function Newspaper({ news }: NewspaperProps) {
 
                 <div className={styles.page}>
                     <div className={styles.backCover}>
-                        <h2>End of Edition</h2>
+                        <h2>Fin de la Edición</h2>
                     </div>
                 </div>
             </HTMLFlipBook>

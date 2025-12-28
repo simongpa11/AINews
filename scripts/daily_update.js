@@ -10,8 +10,8 @@ async function main() {
     console.log('Generating daily news...')
 
     // 1. Fetch summary from ChatGPT (Mocked here)
-    const summary = "Today in AI: Nano Banana 3.0 rumors are spreading. OpenAI announces new partnership. DeepMind solves protein folding again."
-    const title = "AI Daily Digest: " + new Date().toLocaleDateString()
+    const summary = "Hoy en IA: Rumores sobre Nano Banana 3.0 se extienden. OpenAI anuncia nueva colaboración. DeepMind resuelve el plegamiento de proteínas de nuevo."
+    const title = "Resumen Diario IA: " + new Date().toLocaleDateString('es-ES')
 
     // 2. Generate Image with Nano Banana 2.0 (Mocked URL)
     // In reality: Call API -> Upload to storage -> Get URL

@@ -40,38 +40,38 @@ const LibraryPage = forwardRef<HTMLDivElement, LibraryPageProps>((props, ref) =>
 
     const rootNews = savedNews.filter(item => !item.folder_id)
 
-    if (loading) return <div className={styles.container} ref={ref}><p>Loading library...</p></div>
+    if (loading) return <div className={styles.container} ref={ref}><p>Cargando biblioteca...</p></div>
 
     return (
         <div className={styles.container} ref={ref}>
             <div className={styles.header}>
                 {currentFolder && (
                     <button className={styles.backButton} onClick={() => setCurrentFolder(null)}>
-                        <ArrowLeft size={16} /> Back
+                        <ArrowLeft size={16} /> Volver
                     </button>
                 )}
                 <h2 className={styles.title}>
-                    {currentFolder ? folders.find(f => f.id === currentFolder)?.name : 'My Clippings'}
+                    {currentFolder ? folders.find(f => f.id === currentFolder)?.name : 'Mis Recortes'}
                 </h2>
             </div>
 
             <div className={styles.content}>
                 {!currentFolder && (
                     <>
-                        <h3 className={styles.sectionTitle}>Folders</h3>
+                        <h3 className={styles.sectionTitle}>Carpetas</h3>
                         <div className={styles.grid}>
                             {folders.map(folder => (
                                 <div key={folder.id} className={styles.folderCard} onClick={() => setCurrentFolder(folder.id)}>
                                     <FolderIcon size={32} />
                                     <span>{folder.name}</span>
                                     <span className={styles.count}>
-                                        {savedNews.filter(n => n.folder_id === folder.id).length} items
+                                        {savedNews.filter(n => n.folder_id === folder.id).length} artículos
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        <h3 className={styles.sectionTitle}>Unsorted Clippings</h3>
+                        <h3 className={styles.sectionTitle}>Recortes Sin Clasificar</h3>
                     </>
                 )}
 
@@ -80,13 +80,13 @@ const LibraryPage = forwardRef<HTMLDivElement, LibraryPageProps>((props, ref) =>
                         <div key={item.id} className={styles.newsItem}>
                             <FileText size={20} />
                             <div className={styles.newsInfo}>
-                                <span className={styles.newsTitle}>{item.news?.title || 'Unknown Title'}</span>
-                                <span className={styles.newsDate}>{new Date(item.created_at).toLocaleDateString()}</span>
+                                <span className={styles.newsTitle}>{item.news?.title || 'Título Desconocido'}</span>
+                                <span className={styles.newsDate}>{new Date(item.created_at).toLocaleDateString('es-ES')}</span>
                             </div>
                         </div>
                     ))}
                     {(currentFolder ? filteredNews : rootNews).length === 0 && (
-                        <p className={styles.empty}>No clippings here.</p>
+                        <p className={styles.empty}>No hay recortes aquí.</p>
                     )}
                 </div>
             </div>

@@ -26,8 +26,8 @@ export default async function Home() {
   const displayNews = news.length > 0 ? news : [
     {
       id: '1',
-      title: 'Welcome to AI News Daily',
-      summary: 'This is a demo of the AI News Daily application. Once connected to the database and populated with ChatGPT summaries, your daily news will appear here.',
+      title: 'Bienvenido a Noticias IA Diarias',
+      summary: 'Esta es una demostración de la aplicación Noticias IA Diarias. Una vez conectado a la base de datos y poblado con resúmenes de ChatGPT, tus noticias diarias aparecerán aquí.',
       relevance_score: 10,
       created_at: new Date().toISOString(),
       image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995', // AI image placeholder
@@ -35,8 +35,8 @@ export default async function Home() {
     },
     {
       id: '2',
-      title: 'Nano Banana 2.0 Released',
-      summary: 'Google has released Nano Banana 2.0, a revolutionary image generation model. It promises better reasoning and text rendering.',
+      title: 'Lanzamiento de Nano Banana 2.0',
+      summary: 'Google ha lanzado Nano Banana 2.0, un modelo de generación de imágenes revolucionario. Promete un mejor razonamiento y renderizado de texto.',
       relevance_score: 9,
       created_at: new Date().toISOString(),
       image_url: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485',

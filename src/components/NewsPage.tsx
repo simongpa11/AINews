@@ -86,8 +86,8 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 />
             )}
             <div className={styles.header}>
-                <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString()}</span>
-                <span className={styles.pageNumber}>Page {pageNumber}</span>
+                <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
+                <span className={styles.pageNumber}>Página {pageNumber}</span>
             </div>
 
             <h2 className={styles.title}>{newsItem.title}</h2>
@@ -101,11 +101,11 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
             <div className={styles.actions}>
                 <button className={styles.playButton} onClick={handlePlay}>
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                    {isPlaying ? 'Stop' : 'Listen'}
+                    {isPlaying ? 'Parar' : 'Escuchar'}
                 </button>
                 <button className={styles.saveButton} onClick={handleSaveClick} disabled={isSaved}>
                     <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
-                    {isSaved ? 'Saved' : 'Save'}
+                    {isSaved ? 'Guardado' : 'Guardar'}
                 </button>
             </div>
 
@@ -116,7 +116,7 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
             <div className={styles.footer}>
                 {newsItem.original_url && (
                     <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                        Read full article -&gt;
+                        Leer artículo completo -&gt;
                     </a>
                 )}
             </div>
