@@ -12,9 +12,6 @@ const IndexPage = forwardRef<HTMLDivElement, IndexPageProps>(({ news, onNavigate
         <div className={styles.container} ref={ref}>
             <h2 className={styles.title}>Índice</h2>
             <ul className={styles.list}>
-                <li className={styles.item} onClick={() => onNavigate(news.length)}>
-                    <span className={styles.itemTitle} style={{ color: '#ff4d4d' }}>Mis Recortes (Biblioteca)</span>
-                </li>
                 {news.map((item, index) => (
                     <li key={item.id} className={styles.item} onClick={() => onNavigate(index)}>
                         <span className={styles.itemTitle}>{item.title}</span>
