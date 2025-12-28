@@ -83,7 +83,8 @@
 .featuredImageContainer {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 260px;
+    /* Desktop height */
     margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
@@ -257,6 +258,11 @@
 
     .editorialLead {
         font-size: 1.1rem;
+    }
+
+    .featuredImageContainer {
+        height: 190px;
+        /* Mobile height */
     }
 
     .articleFooter {
