@@ -165,28 +165,29 @@
     font-size: 0.95rem;
 }
 
-/* 9. Fuente */
-.sourceLine {
-    font-size: 0.75rem;
-    font-family: 'Inter', sans-serif;
-    margin-top: 40px;
-    margin-bottom: 10px;
-    opacity: 0.8;
-}
-
-.sourceLine a {
-    color: #002E7D;
-    text-decoration: none;
-    word-break: break-all;
-}
-
 /* 10. Footer del artículo */
 .articleFooter {
     border-top: 1px solid #002E7D;
     padding-top: 15px;
     display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.sourceInfo {
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    opacity: 0.8;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sourceLink {
+    color: #002E7D;
+    text-decoration: none;
 }
 
 .fullArticleLink {
@@ -204,5 +205,15 @@
 
     .editorialLead {
         font-size: 1.1rem;
+    }
+
+    .articleFooter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .sourceInfo {
+        max-width: 100%;
     }
 }

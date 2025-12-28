@@ -37,13 +37,14 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
 
     const recommendation = recMatch ? recMatch[0] : null
 
-    // 2. Clean the text (remove priority and recommendation tags completely)
+    // 2. Clean the text (remove priority, recommendation, and source tags completely)
     let cleanedText = fullText
     if (prioMatch) cleanedText = cleanedText.replace(prioMatch[0], '')
     if (recMatch) cleanedText = cleanedText.replace(recMatch[0], '')
 
-    // Also catch variations like "Prioridad Baja" without colon if they exist
+    // Also catch variations like "Prioridad Baja" or "Fuente: http..."
     cleanedText = cleanedText.replace(/Prioridad\s+(Baja|Media|Alta|Alerta)/gi, '')
+    cleanedText = cleanedText.replace(/(?:Fuente|Source):\s*https?:\/\/[^\s]+/gi, '')
 
     cleanedText = cleanedText.trim()
 
@@ -181,13 +182,11 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 </div>
             )}
 
-            {/* 8. Fuente */}
-            <div className={styles.sourceLine}>
-                Fuente: <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer">{newsItem.original_url}</a>
-            </div>
-
-            {/* 9. Footer del artículo */}
+            {/* 8 & 9. Footer con Fuente y Link */}
             <div className={styles.articleFooter}>
+                <div className={styles.sourceInfo}>
+                    Fuente: <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>{newsItem.original_url}</a>
+                </div>
                 <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
                     Leer artículo completo →
                 </a>
