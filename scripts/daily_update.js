@@ -18,7 +18,11 @@ async function main() {
     const imageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995"
 
     // 3. Generate Audio (Mocked)
-    // In reality: Call ElevenLabs/Google TTS -> Upload -> Get URL
+    // In reality: Call Google Cloud Text-to-Speech API
+    // Configuration requested:
+    // languageCode: 'es-ES'
+    // name: 'es-ES-Chirp-HD-D' (Premium)
+    // ssmlGender: 'FEMALE' (or MALE)
     const audioUrl = null
 
     // 4. Insert into Supabase

@@ -30,6 +30,17 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
         } else {
             const utterance = new SpeechSynthesisUtterance(newsItem.summary)
             utterance.lang = 'es-ES'
+
+            // Try to select a high quality Google voice if available in the browser
+            const voices = window.speechSynthesis.getVoices()
+            const googleVoice = voices.find(v =>
+                v.lang.includes('es-ES') && v.name.includes('Google')
+            ) || voices.find(v => v.lang.includes('es-ES'))
+
+            if (googleVoice) {
+                utterance.voice = googleVoice
+            }
+
             window.speechSynthesis.speak(utterance)
             setIsPlaying(true)
             utterance.onend = () => setIsPlaying(false)
