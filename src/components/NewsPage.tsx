@@ -195,23 +195,43 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                         <div className={styles.recLine}>{recommendation}</div>
                     </div>
                 )}
+
+                {/* Mobile Sources Chip (End of scroll) */}
+                <div className={styles.mobileSourcesWrapper}>
+                    <div className={styles.sourcesWrapper}>
+                        {showSources && (
+                            <div className={styles.sourcesPopover}>
+                                {sources.map((url, idx) => (
+                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
+                                        {new URL(url).hostname}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                        <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
+                            Fuentes ({sources.length})
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* 8 & 9. Footer con Fuentes y Link */}
             <div className={styles.articleFooter}>
-                <div className={styles.sourcesWrapper}>
-                    {showSources && (
-                        <div className={styles.sourcesPopover}>
-                            {sources.map((url, idx) => (
-                                <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
-                                    {new URL(url).hostname}
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                    <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
-                        Fuentes ({sources.length})
-                    </button>
+                <div className={styles.desktopSourcesWrapper}>
+                    <div className={styles.sourcesWrapper}>
+                        {showSources && (
+                            <div className={styles.sourcesPopover}>
+                                {sources.map((url, idx) => (
+                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
+                                        {new URL(url).hostname}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                        <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
+                            Fuentes ({sources.length})
+                        </button>
+                    </div>
                 </div>
                 <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
                     Leer artículo completo →
