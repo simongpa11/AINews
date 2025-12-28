@@ -25,6 +25,17 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const prioMatch = fullText.match(/(?:Prioridad|Priority):\s*(LOW|MED|HIGH|ALERT|BAJA|MEDIA|ALTA|ALERTA)/i)
     const recMatch = fullText.match(/(?:Recomendación|Recommendation):\s*([^\n.]+)/i)
 
+    // Extract ALL sources
+    const sourceMatches = fullText.match(/(?:Fuente|Source):\s*(https?:\/\/[^\s,]+(?:,\s*https?:\/\/[^\s,]+)*)/i)
+    let sources: string[] = []
+    if (sourceMatches) {
+        sources = sourceMatches[1].split(/,\s*/).map(s => s.trim())
+    }
+    // Always include original_url if not already there
+    if (newsItem.original_url && !sources.includes(newsItem.original_url)) {
+        sources.unshift(newsItem.original_url)
+    }
+
     // Map translated priorities back to standard keys if needed
     const rawPriority = prioMatch ? prioMatch[1].toUpperCase() : 'MED'
     const priorityMap: { [key: string]: string } = {
@@ -41,12 +52,15 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     let cleanedText = fullText
     if (prioMatch) cleanedText = cleanedText.replace(prioMatch[0], '')
     if (recMatch) cleanedText = cleanedText.replace(recMatch[0], '')
+    if (sourceMatches) cleanedText = cleanedText.replace(sourceMatches[0], '')
 
     // Also catch variations like "Prioridad Baja" or "Fuente: http..."
     cleanedText = cleanedText.replace(/Prioridad\s+(Baja|Media|Alta|Alerta)/gi, '')
-    cleanedText = cleanedText.replace(/(?:Fuente|Source):\s*https?:\/\/[^\s]+/gi, '')
+
 
     cleanedText = cleanedText.trim()
+
+    const [showSources, setShowSources] = useState(false)
 
     // 3. Extract Lead (First 1-2 sentences of cleaned text)
     const sentences = cleanedText.match(/[^.!?]+[.!?]+/g) || [cleanedText]
@@ -182,10 +196,21 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 </div>
             )}
 
-            {/* 8 & 9. Footer con Fuente y Link */}
+            {/* 8 & 9. Footer con Fuentes y Link */}
             <div className={styles.articleFooter}>
-                <div className={styles.sourceInfo}>
-                    Fuente: <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>{newsItem.original_url}</a>
+                <div className={styles.sourcesWrapper}>
+                    {showSources && (
+                        <div className={styles.sourcesPopover}>
+                            {sources.map((url, idx) => (
+                                <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
+                                    {new URL(url).hostname}
+                                </a>
+                            ))}
+                        </div>
+                    )}
+                    <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
+                        Fuentes ({sources.length})
+                    </button>
                 </div>
                 <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
                     Leer artículo completo →
