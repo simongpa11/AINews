@@ -1,0 +1,103 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: 'Merriweather', serif;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+}
+
+.imageContainer {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.playButton,
+.saveButton {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.playButton {
+    background: #000;
+    color: #fff;
+}
+
+.playButton:hover {
+    background: #333;
+}
+
+.saveButton {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.saveButton:hover {
+    background: #e0e0e0;
+}
+
+.content {
+    flex-grow: 1;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
+.link {
+    color: #ff4d4d;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
