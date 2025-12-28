@@ -86,8 +86,6 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
         .replace(/\n\s*\n/g, '\n')
         .trim()
 
-    const [showSources, setShowSources] = useState(false)
-
     // 3. Extract Lead (First 1-2 sentences of cleaned text)
     const sentences = cleanedText.match(/[^.!?]+[.!?]+/g) || [cleanedText]
     const lead = sentences.slice(0, 2).join(' ')
