@@ -1,15 +1,16 @@
 :root {
-  --background: #1a1a1a;
-  --foreground: #ededed;
-  --paper-bg: #fdfbf7;
-  --paper-text: #1a1a1a;
-  --accent: #ff4d4d;
+  --background: #01A7E7;
+  --foreground: #002E7D;
+  --paper-bg: #01A7E7;
+  --paper-text: #002E7D;
+  --accent: #002E7D;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', sans-serif; /* Make sure to import Inter in layout */
+  font-family: 'Inter', sans-serif;
+  /* Make sure to import Inter in layout */
   margin: 0;
   padding: 0;
   overflow: hidden;

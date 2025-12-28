@@ -7,9 +7,10 @@
 .title {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
-    border-bottom: 4px double #000;
+    border-bottom: 4px double #002E7D;
     padding-bottom: 10px;
     margin-bottom: 30px;
+    color: #002E7D;
 }
 
 .list {
@@ -23,9 +24,10 @@
     justify-content: space-between;
     align-items: baseline;
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #002E7D;
     cursor: pointer;
     transition: background 0.2s;
+    color: #002E7D;
 }
 
 .item:hover {
@@ -44,8 +46,9 @@
 .score {
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
-    color: #666;
+    color: #002E7D;
     white-space: nowrap;
+    opacity: 0.8;
 }
 
 @media (max-width: 600px) {

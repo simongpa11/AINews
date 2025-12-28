@@ -3,14 +3,15 @@
     display: flex;
     flex-direction: column;
     padding: 40px;
-    background: #fdfbf7;
+    background: #01A7E7;
+    color: #002E7D;
 }
 
 .header {
     display: flex;
     align-items: center;
     gap: 15px;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid #002E7D;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
@@ -30,6 +31,7 @@
     gap: 5px;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
+    color: #002E7D;
 }
 
 .content {
@@ -40,10 +42,11 @@
 .sectionTitle {
     font-family: 'Merriweather', serif;
     font-size: 1rem;
-    color: #666;
+    color: #002E7D;
     margin: 20px 0 10px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
+    opacity: 0.8;
 }
 
 .grid {
@@ -54,8 +57,8 @@
 }
 
 .folderCard {
-    background: #fff;
-    border: 1px solid #ddd;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #002E7D;
     border-radius: 8px;
     padding: 15px;
     display: flex;
@@ -64,13 +67,13 @@
     gap: 10px;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    color: #002E7D;
 }
 
 .folderCard:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border-color: #333;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #002E7D;
 }
 
 .count {
@@ -89,7 +92,7 @@
     align-items: flex-start;
     gap: 10px;
     padding: 10px;
-    border-bottom: 1px dashed #ccc;
+    border-bottom: 1px dashed #002E7D;
 }
 
 .newsInfo {

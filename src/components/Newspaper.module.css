@@ -2,7 +2,7 @@
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background: #1a1a1a;
+    background: #01A7E7;
 }
 
 .scrollContainer {
@@ -23,7 +23,8 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    background: #fdfbf7;
+    background: #01A7E7;
+    color: #002E7D;
 }
 
 .pageContent {
@@ -41,8 +42,8 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    background: #111;
-    color: #fff;
+    background: #01A7E7;
+    color: #002E7D;
     text-align: center;
     padding: 20px;
 }
@@ -54,6 +55,7 @@
     letter-spacing: 2px;
     margin-bottom: 1rem;
     font-family: 'Playfair Display', serif;
+    color: #002E7D;
 }
 
 .scrollHint {
@@ -96,8 +98,8 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    background: #111;
-    color: #fff;
+    background: #01A7E7;
+    color: #002E7D;
     gap: 20px;
 }
 
@@ -105,8 +107,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #fff;
-    color: #000;
+    background: #002E7D;
+    color: #01A7E7;
     border: none;
     padding: 12px 24px;
     border-radius: 30px;

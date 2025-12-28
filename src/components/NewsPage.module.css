@@ -3,16 +3,17 @@
     flex-direction: column;
     height: 100%;
     font-family: 'Merriweather', serif;
+    color: #002E7D;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
-    border-bottom: 2px solid #000;
+    border-bottom: 2px solid #002E7D;
     padding-bottom: 10px;
     margin-bottom: 20px;
     font-size: 0.9rem;
-    color: #666;
+    color: #002E7D;
     text-transform: uppercase;
 }
 
@@ -60,21 +61,22 @@
 }
 
 .playButton {
-    background: #000;
-    color: #fff;
+    background: #002E7D;
+    color: #01A7E7;
 }
 
 .playButton:hover {
-    background: #333;
+    background: #001a4d;
 }
 
 .saveButton {
-    background: #f0f0f0;
-    color: #333;
+    background: rgba(0, 46, 125, 0.1);
+    color: #002E7D;
+    border: 1px solid #002E7D;
 }
 
 .saveButton:hover {
-    background: #e0e0e0;
+    background: rgba(0, 46, 125, 0.2);
 }
 
 .content {
@@ -87,13 +89,13 @@
 .footer {
     margin-top: auto;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #002E7D;
     text-align: right;
 }
 
 .link {
-    color: #ff4d4d;
-    text-decoration: none;
+    color: #002E7D;
+    text-decoration: underline;
     font-weight: 700;
     font-size: 0.9rem;
 }
