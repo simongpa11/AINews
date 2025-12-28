@@ -97,7 +97,8 @@ async function main() {
                 Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos.
                 Cada objeto en el array debe tener:
                 - 'title': Máx 8 palabras, claro y técnico.
-                - 'summary': El resumen factual (1 línea) + 'Por qué importa' + 'Acción recomendada' + 'Prioridad' + 'Fuente'. Todo formateado elegantemente para lectura.
+                - 'summary': El resumen factual + 'Por qué importa' + 'Acción recomendada' + 'Prioridad' + 'Fuente'. 
+                  IMPORTANTE: El texto total del campo 'summary' NO debe exceder las 10 líneas de texto para asegurar que quepa en la pantalla.
                 - 'relevance_score': Un número del 1 al 10 basado en la prioridad (LOW=3, MED=6, HIGH=9, ALERT=10).
                 
                 ${extraInstructions}`

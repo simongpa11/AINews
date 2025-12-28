@@ -32,7 +32,8 @@
     height: 100%;
     max-width: 800px;
     padding: 40px;
-    overflow-y: auto;
+    overflow: hidden;
+    /* Individual pages handle their own scrolling */
 }
 
 .cover {

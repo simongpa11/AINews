@@ -145,56 +145,58 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 />
             )}
 
-            {/* 1. Cabecera editorial */}
-            <div className={styles.editorialHeader}>
-                <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
-                <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
-                    {priority === 'ALERT' ? (
-                        <span className={styles.prioIcon}><Bell size={12} fill="currentColor" /></span>
-                    ) : (
-                        <span className={`${styles.prioDot} ${styles[priority.toLowerCase() + 'Dot']}`}></span>
-                    )}
-                    {priority}
-                </span>
-                <span className={styles.section}>Página {pageNumber}</span>
-            </div>
-
-            {/* 2. Título principal */}
-            <h1 className={styles.mainTitle}>{newsItem.title}</h1>
-
-            {/* 3. Imagen destacada */}
-            <div className={styles.featuredImageContainer}>
-                <Image src={newsItem.image_url!} alt={newsItem.title} fill className={styles.featuredImage} />
-            </div>
-
-            {/* 4. Acciones rápidas */}
-            <div className={styles.quickActions}>
-                <button className={styles.pillButton} onClick={handlePlay}>
-                    {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-                    {isPlaying ? 'Parar' : 'Escuchar'}
-                </button>
-                <button className={styles.pillButton} onClick={handleSaveClick} disabled={isSaved}>
-                    <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
-                    {isSaved ? 'Guardado' : 'Guardar'}
-                </button>
-            </div>
-
-            {/* 5. Lead editorial */}
-            <div className={styles.editorialLead}>
-                {lead}
-            </div>
-
-            {/* 6. Texto de análisis */}
-            <div className={styles.analysisText}>
-                {analysisText}
-            </div>
-
-            {/* 7. Bloque de recomendación */}
-            {recommendation && (
-                <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
-                    <div className={styles.recLine}>{recommendation}</div>
+            <div className={styles.scrollableContent}>
+                {/* 1. Cabecera editorial */}
+                <div className={styles.editorialHeader}>
+                    <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
+                    <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
+                        {priority === 'ALERT' ? (
+                            <span className={styles.prioIcon}><Bell size={12} fill="currentColor" /></span>
+                        ) : (
+                            <span className={`${styles.prioDot} ${styles[priority.toLowerCase() + 'Dot']}`}></span>
+                        )}
+                        {priority}
+                    </span>
+                    <span className={styles.section}>Página {pageNumber}</span>
                 </div>
-            )}
+
+                {/* 2. Título principal */}
+                <h1 className={styles.mainTitle}>{newsItem.title}</h1>
+
+                {/* 3. Imagen destacada */}
+                <div className={styles.featuredImageContainer}>
+                    <Image src={newsItem.image_url!} alt={newsItem.title} fill className={styles.featuredImage} />
+                </div>
+
+                {/* 4. Acciones rápidas */}
+                <div className={styles.quickActions}>
+                    <button className={styles.pillButton} onClick={handlePlay}>
+                        {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                        {isPlaying ? 'Parar' : 'Escuchar'}
+                    </button>
+                    <button className={styles.pillButton} onClick={handleSaveClick} disabled={isSaved}>
+                        <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
+                        {isSaved ? 'Guardado' : 'Guardar'}
+                    </button>
+                </div>
+
+                {/* 5. Lead editorial */}
+                <div className={styles.editorialLead}>
+                    {lead}
+                </div>
+
+                {/* 6. Texto de análisis */}
+                <div className={styles.analysisText}>
+                    {analysisText}
+                </div>
+
+                {/* 7. Bloque de recomendación */}
+                {recommendation && (
+                    <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
+                        <div className={styles.recLine}>{recommendation}</div>
+                    </div>
+                )}
+            </div>
 
             {/* 8 & 9. Footer con Fuentes y Link */}
             <div className={styles.articleFooter}>
