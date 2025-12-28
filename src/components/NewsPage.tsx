@@ -15,6 +15,32 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const [isPlaying, setIsPlaying] = useState(false)
     const [isSaved, setIsSaved] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const [showFolderSelector, setShowFolderSelector] = useState(false)
+
+    // --- Content Extraction Logic ---
+    const fullText = newsItem.summary || ''
+
+    // 1. Extract Lead (First 1-2 sentences)
+    const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [fullText]
+    const lead = sentences.slice(0, 2).join(' ')
+    const remainingText = sentences.slice(2).join(' ')
+
+    // 2. Extract Recommendation and Priority
+    const recMatch = remainingText.match(/Recomendación:\s*([^\n.]+)/i)
+    const prioMatch = remainingText.match(/Prioridad:\s*(LOW|MED|HIGH|ALERT)/i)
+
+    const recommendation = recMatch ? recMatch[0] : null
+    const priority = prioMatch ? prioMatch[1] : 'MED'
+
+    // Clean analysis text (remove extracted parts)
+    let analysisText = remainingText
+    if (recommendation && recMatch) analysisText = analysisText.replace(recMatch[0], '')
+    if (prioMatch) analysisText = analysisText.replace(prioMatch[0], '')
+    analysisText = analysisText.trim()
+
+    // Validation
+    const isValid = !!(newsItem.title && newsItem.image_url && newsItem.original_url && lead)
+    if (!isValid) return null
 
     const handlePlay = () => {
         if (isPlaying) {
@@ -37,30 +63,18 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
         } else {
             const utterance = new SpeechSynthesisUtterance(newsItem.summary)
             utterance.lang = 'es-ES'
-
-            // Try to select a high quality Google voice if available in the browser
             const voices = window.speechSynthesis.getVoices()
-            const googleVoice = voices.find(v =>
-                v.lang.includes('es-ES') && v.name.includes('Google')
-            ) || voices.find(v => v.lang.includes('es-ES'))
-
-            if (googleVoice) {
-                utterance.voice = googleVoice
-            }
-
+            const googleVoice = voices.find(v => v.lang.includes('es-ES') && v.name.includes('Google')) || voices.find(v => v.lang.includes('es-ES'))
+            if (googleVoice) utterance.voice = googleVoice
             window.speechSynthesis.speak(utterance)
             setIsPlaying(true)
             utterance.onend = () => setIsPlaying(false)
         }
     }
 
-    const [showFolderSelector, setShowFolderSelector] = useState(false)
-
     const handleSaveClick = async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-            // For demo purposes, we might want to allow a dummy login or alert
-            // But since we don't have a login UI, let's just alert
             const email = prompt('Enter email to login/signup (Magic Link):')
             if (email) {
                 await supabase.auth.signInWithOtp({ email })
@@ -74,13 +88,11 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const handleFolderSelect = async (folderId: string | null) => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
-
         const { error } = await supabase.from('saved_news').insert({
             news_id: newsItem.id,
             user_id: user.id,
             folder_id: folderId
         })
-
         if (error) {
             if (error.code === '23505') {
                 alert('Already saved!')
@@ -103,40 +115,59 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                     onClose={() => setShowFolderSelector(false)}
                 />
             )}
-            <div className={styles.header}>
+
+            {/* 1. Cabecera editorial */}
+            <div className={styles.editorialHeader}>
                 <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
-                <span className={styles.pageNumber}>Página {pageNumber}</span>
+                <span className={styles.section}>Página {pageNumber}</span>
             </div>
 
-            <h2 className={styles.title}>{newsItem.title}</h2>
+            {/* 2. Título principal */}
+            <h1 className={styles.mainTitle}>{newsItem.title}</h1>
 
-            {newsItem.image_url && (
-                <div className={styles.imageContainer}>
-                    <Image src={newsItem.image_url} alt={newsItem.title} fill className={styles.image} />
-                </div>
-            )}
+            {/* 3. Imagen destacada */}
+            <div className={styles.featuredImageContainer}>
+                <Image src={newsItem.image_url!} alt={newsItem.title} fill className={styles.featuredImage} />
+            </div>
 
-            <div className={styles.actions}>
-                <button className={styles.playButton} onClick={handlePlay}>
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+            {/* 4. Acciones rápidas */}
+            <div className={styles.quickActions}>
+                <button className={styles.pillButton} onClick={handlePlay}>
+                    {isPlaying ? <Pause size={18} /> : <Play size={18} />}
                     {isPlaying ? 'Parar' : 'Escuchar'}
                 </button>
-                <button className={styles.saveButton} onClick={handleSaveClick} disabled={isSaved}>
-                    <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
+                <button className={styles.pillButton} onClick={handleSaveClick} disabled={isSaved}>
+                    <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
                     {isSaved ? 'Guardado' : 'Guardar'}
                 </button>
             </div>
 
-            <div className={styles.content}>
-                <p>{newsItem.summary}</p>
+            {/* 5. Lead editorial */}
+            <div className={styles.editorialLead}>
+                {lead}
             </div>
 
-            <div className={styles.footer}>
-                {newsItem.original_url && (
-                    <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                        Leer artículo completo -&gt;
-                    </a>
-                )}
+            {/* 6. Texto de análisis */}
+            <div className={styles.analysisText}>
+                {analysisText}
+            </div>
+
+            {/* 7. Bloque de recomendación y prioridad */}
+            <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
+                {recommendation && <div className={styles.recLine}>{recommendation}</div>}
+                <div className={styles.prioLine}>Prioridad: {priority}</div>
+            </div>
+
+            {/* 8. Fuente */}
+            <div className={styles.sourceLine}>
+                Fuente: <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer">{newsItem.original_url}</a>
+            </div>
+
+            {/* 9. Footer del artículo */}
+            <div className={styles.articleFooter}>
+                <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
+                    Leer artículo completo →
+                </a>
             </div>
         </div>
     )

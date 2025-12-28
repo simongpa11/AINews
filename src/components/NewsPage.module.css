@@ -4,128 +4,167 @@
     height: 100%;
     font-family: 'Merriweather', serif;
     color: #002E7D;
+    background: #01A7E7;
 }
 
-.header {
+/* 2. Cabecera editorial */
+.editorialHeader {
     display: flex;
     justify-content: space-between;
-    border-bottom: 2px solid #002E7D;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #002E7D;
+    border-bottom: 1px solid #002E7D;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.title {
+/* 3. Título principal */
+.mainTitle {
     font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 20px 0;
+    font-size: 2.2rem;
     line-height: 1.2;
-}
-
-.imageContainer {
-    width: 100%;
-    height: 250px;
-    position: relative;
-    margin-bottom: 20px;
+    margin: 20px 0;
+    font-weight: 900;
+    max-height: 2.4em;
+    /* Max 2 lines approx */
     overflow: hidden;
-    border-radius: 4px;
 }
 
-.image {
-    object-fit: cover;
+/* 4. Imagen destacada */
+.featuredImageContainer {
+    position: relative;
     width: 100%;
-    height: 100%;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
+    aspect-ratio: 16 / 9;
     margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 0;
+    border: 4px solid rgba(0, 46, 125, 0.1);
 }
 
-.playButton,
-.saveButton {
+.featuredImage {
+    object-fit: cover;
+}
+
+/* 5. Acciones rápidas */
+.quickActions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.pillButton {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     padding: 8px 16px;
-    border: none;
     border-radius: 20px;
+    border: 1.5px solid #002E7D;
+    background: transparent;
+    color: #002E7D;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
     transition: all 0.2s;
 }
 
-.playButton {
-    background: #002E7D;
-    color: #01A7E7;
-}
-
-.playButton:hover {
-    background: #001a4d;
-}
-
-.saveButton {
+.pillButton:hover {
     background: rgba(0, 46, 125, 0.1);
-    color: #002E7D;
-    border: 1px solid #002E7D;
 }
 
-.saveButton:hover {
-    background: rgba(0, 46, 125, 0.2);
+.pillButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.content {
-    flex-grow: 1;
-    font-size: 1.1rem;
+/* 6. Lead editorial */
+.editorialLead {
+    font-size: 1.25rem;
     line-height: 1.6;
+    margin-bottom: 24px;
+    font-weight: 400;
+    color: #002E7D;
+    font-family: 'Merriweather', serif;
+}
+
+/* 7. Texto de análisis */
+.analysisText {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    color: #002E7D;
     text-align: justify;
 }
 
-.footer {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #002E7D;
-    text-align: right;
+/* 8. Bloque de recomendación y prioridad */
+.recommendationBlock {
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid #002E7D;
+    padding: 20px;
+    margin-bottom: 30px;
+    font-family: 'Inter', sans-serif;
 }
 
-.link {
+.recommendationBlock.alert {
+    background: rgba(255, 255, 255, 0.25);
+    border-left-width: 6px;
+}
+
+.recLine {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.prioLine {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 9. Fuente */
+.sourceLine {
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.sourceLine a {
     color: #002E7D;
-    text-decoration: underline;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+/* 10. Footer del artículo */
+.articleFooter {
+    border-top: 1px solid #002E7D;
+    padding-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.fullArticleLink {
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
-}
-
-.link:hover {
-    text-decoration: underline;
+    color: #002E7D;
+    text-decoration: none;
 }
 
 @media (max-width: 600px) {
-    .title {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
+    .mainTitle {
+        font-size: 1.8rem;
     }
 
-    .imageContainer {
-        height: 180px;
-    }
-
-    .content {
-        font-size: 1rem;
-    }
-
-    .actions {
-        flex-wrap: wrap;
-    }
-
-    .playButton,
-    .saveButton {
-        flex: 1;
-        justify-content: center;
-        font-size: 0.8rem;
+    .editorialLead {
+        font-size: 1.1rem;
     }
 }
