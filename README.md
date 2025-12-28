@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI News Daily
 
-## Getting Started
+A modern, newspaper-style web application for daily AI news summaries.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Dynamic Newspaper Interface**: Flip through pages like a real newspaper using `react-pageflip`.
+- **Daily Summaries**: Designed to display daily AI news summaries (e.g., from ChatGPT).
+- **Audio Playback**: Built-in text-to-speech (Web Speech API fallback, supports external audio URLs).
+- **Save & Organize**: Save articles to your personal collection (Supabase backend).
+- **Modern Design**: Glassmorphism, elegant typography, and responsive layout.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2.  **Supabase Setup**:
+    -   Create a new project on [Supabase](https://supabase.com).
+    -   Run the SQL commands in `supabase_schema.sql` in the Supabase SQL Editor to create tables and policies.
+    -   Copy `.env.local.example` to `.env.local` and fill in your Supabase URL and Anon Key.
 
-## Learn More
+3.  **Run Locally**:
+    ```bash
+    npm run dev
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+4.  **Nano Banana 2.0 & Audio**:
+    -   The app is configured to display images and play audio from URLs provided in the database.
+    -   To fully automate generation, you would need a backend script (e.g., a Supabase Edge Function) to:
+        -   Fetch daily summaries.
+        -   Generate images using Nano Banana 2.0 (or Google Gemini/Imagen).
+        -   Generate audio using Google Cloud TTS or ElevenLabs.
+        -   Insert the data into the `news` table.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-   **Framework**: Next.js 14 (App Router)
+-   **Styling**: CSS Modules (Vanilla CSS)
+-   **Database**: Supabase
+-   **Animations**: Framer Motion, React PageFlip
+-   **Icons**: Lucide React
