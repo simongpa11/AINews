@@ -32,8 +32,9 @@
 }
 
 .item:hover {
-    background: #f9f9f9;
-    padding-left: 10px;
+    background: rgba(0, 46, 125, 0.05);
+    padding-left: 15px;
+    border-bottom-color: #002E7D;
 }
 
 .itemTitle {
