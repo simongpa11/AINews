@@ -186,6 +186,18 @@
 .recLine {
     font-weight: 700;
     font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #002E7D;
+}
+
+.recIcon {
+    color: #FFD700;
+    /* Yellow lightbulb */
+    flex-shrink: 0;
+    margin-top: 2px;
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
 }
 
 /* 10. Footer del artículo */

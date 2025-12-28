@@ -94,6 +94,7 @@ async function main() {
                   2. NO dupliques la 'Acción recomendada' dentro del cuerpo del resumen. Ponla SOLO al final precedida de 'Acción recomendada:'.
                   3. La 'Acción recomendada' debe ser una sola frase de acción pura, sin incluir la prioridad ni la fuente dentro de esa misma frase.
                   4. La 'Prioridad' y la 'Fuente' deben ir en sus propias líneas al final de todo.
+                  5. REGLA DE ORO PARA FUENTES: Debes incluir la URL real de la noticia original (ej: TechCrunch, Reuters, blog oficial). NUNCA pongas 'OpenAI' o 'ChatGPT' como fuente. Si no tienes la URL exacta, busca la fuente primaria más probable.
                 - 'relevance_score': Un número del 1 al 10 basado en la prioridad (LOW=3, MED=6, HIGH=9, ALERT=10).
                 
                 ${extraInstructions}`
@@ -178,7 +179,7 @@ async function main() {
             image_url: publicImageUrl,
             audio_url: publicAudioUrl,
             relevance_score: item.relevance_score || 7,
-            original_url: item.source || 'https://openai.com'
+            original_url: item.source || 'https://news.google.com'
         })
     }
 

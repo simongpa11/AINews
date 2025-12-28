@@ -1,6 +1,6 @@
 import { News } from '@/types'
 import Image from 'next/image'
-import { Play, Bookmark, Pause, Bell, Link } from 'lucide-react'
+import { Play, Bookmark, Pause, Bell, Link, Lightbulb } from 'lucide-react'
 import styles from './NewsPage.module.css'
 import { forwardRef, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -210,7 +210,10 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 {/* 7. Bloque de recomendación */}
                 {recommendation && (
                     <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
-                        <div className={styles.recLine}>{recommendation}</div>
+                        <div className={styles.recLine}>
+                            <Lightbulb size={18} className={styles.recIcon} />
+                            <strong>Acción recomendada:</strong> {recommendation.replace(/^(?:Recomendación|Recommendation|Acción recomendada):\s*/i, '')}
+                        </div>
                     </div>
                 )}
 
