@@ -1,99 +1,82 @@
 'use client'
-import HTMLFlipBook from 'react-pageflip'
-import { useRef, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { News } from '@/types'
 import NewsPage from './NewsPage'
 import IndexPage from './IndexPage'
 import LibraryPage from './LibraryPage'
 import styles from './Newspaper.module.css'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface NewspaperProps {
     news: News[]
 }
 
 export default function Newspaper({ news }: NewspaperProps) {
-    const book = useRef<any>(null)
     const [mounted, setMounted] = useState(false)
-    const [isMobile, setIsMobile] = useState(false)
-    const [dimensions, setDimensions] = useState({ width: 500, height: 700 })
+    const [currentPage, setCurrentPage] = useState(0)
 
     useEffect(() => {
         setMounted(true)
-        const handleResize = () => {
-            const mobile = window.innerWidth < 768
-            setIsMobile(mobile)
-            const availableWidth = window.innerWidth
-            const availableHeight = window.innerHeight
-
-            // On mobile, we want single page view.
-            // Width should be the full width of the screen.
-            // On desktop, width is half the screen (for 2-page spread).
-
-            let pageHeight = availableHeight
-            let pageWidth = mobile ? availableWidth : availableWidth / 2
-
-            setDimensions({ width: pageWidth, height: pageHeight })
-        }
-
-        handleResize()
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     if (!mounted) return null
 
+    const totalPages = news.length + 3 // Cover, Index, News..., Library, BackCover
+
+    const navigateTo = (index: number) => {
+        setCurrentPage(index)
+        const element = document.getElementById(`page-${index}`)
+        element?.scrollIntoView({ behavior: 'smooth' })
+    }
+
     return (
-        <div className={styles.container}>
-            {/* @ts-ignore */}
-            <HTMLFlipBook
-                width={dimensions.width}
-                height={dimensions.height}
-                size="fixed"
-                minWidth={300}
-                maxWidth={2000}
-                minHeight={400}
-                maxHeight={2000}
-                maxShadowOpacity={0.5}
-                showCover={true}
-                mobileScrollSupport={true}
-                className={styles.book}
-                ref={book}
-                flippingTime={1000}
-                usePortrait={isMobile} // Force portrait mode on mobile
-                startZIndex={0}
-                autoSize={true}
-                clickEventForward={true}
-                useMouseEvents={true}
-                swipeDistance={30}
-                showPageCorners={!isMobile}
-                disableFlipByClick={isMobile} // On mobile, swipe is better, click might be accidental
-            >
-                <div className={styles.cover} data-density="hard">
-                    <h1>Noticias IA Diarias</h1>
-                    <p>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                    <p style={{ marginTop: '20px', fontSize: '0.8rem' }}>Desliza o haz clic para pasar página</p>
-                </div>
-
-                <div className={styles.page}>
-                    <IndexPage news={news} onNavigate={(index) => book.current?.pageFlip().flip(index + 2)} />
-                </div>
-
-                {news.map((item, index) => (
-                    <div key={item.id} className={styles.page}>
-                        <NewsPage newsItem={item} pageNumber={index + 1} />
+        <div className={styles.mainContainer}>
+            <div className={styles.scrollContainer}>
+                {/* Cover */}
+                <section id="page-0" className={styles.fullPage}>
+                    <div className={styles.cover}>
+                        <h1>Noticias IA Diarias</h1>
+                        <p>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <div className={styles.scrollHint}>
+                            <span>Desliza para leer</span>
+                            <ChevronDown className={styles.bounce} />
+                        </div>
                     </div>
+                </section>
+
+                {/* Index */}
+                <section id="page-1" className={styles.fullPage}>
+                    <div className={styles.pageContent}>
+                        <IndexPage news={news} onNavigate={(index) => navigateTo(index + 2)} />
+                    </div>
+                </section>
+
+                {/* News Pages */}
+                {news.map((item, index) => (
+                    <section key={item.id} id={`page-${index + 2}`} className={styles.fullPage}>
+                        <div className={styles.pageContent}>
+                            <NewsPage newsItem={item} pageNumber={index + 1} />
+                        </div>
+                    </section>
                 ))}
 
-                <div className={styles.page}>
-                    <LibraryPage />
-                </div>
+                {/* Library */}
+                <section id={`page-${news.length + 2}`} className={styles.fullPage}>
+                    <div className={styles.pageContent}>
+                        <LibraryPage />
+                    </div>
+                </section>
 
-                <div className={styles.page}>
+                {/* Back Cover */}
+                <section id={`page-${news.length + 3}`} className={styles.fullPage}>
                     <div className={styles.backCover}>
                         <h2>Fin de la Edición</h2>
+                        <button onClick={() => navigateTo(0)} className={styles.topButton}>
+                            <ChevronUp /> Volver al inicio
+                        </button>
                     </div>
-                </div>
-            </HTMLFlipBook>
+                </section>
+            </div>
         </div>
     )
 }

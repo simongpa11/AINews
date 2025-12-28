@@ -2,7 +2,7 @@ import { News } from '@/types'
 import Image from 'next/image'
 import { Play, Bookmark, Pause } from 'lucide-react'
 import styles from './NewsPage.module.css'
-import { forwardRef, useState } from 'react'
+import { forwardRef, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import FolderSelector from './FolderSelector'
 
@@ -14,19 +14,26 @@ interface NewsPageProps {
 const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumber }, ref) => {
     const [isPlaying, setIsPlaying] = useState(false)
     const [isSaved, setIsSaved] = useState(false)
+    const audioRef = useRef<HTMLAudioElement | null>(null)
 
     const handlePlay = () => {
         if (isPlaying) {
+            if (audioRef.current) {
+                audioRef.current.pause()
+                audioRef.current.currentTime = 0
+            }
             window.speechSynthesis.cancel()
             setIsPlaying(false)
             return
         }
 
         if (newsItem.audio_url) {
-            const audio = new Audio(newsItem.audio_url)
-            audio.play()
+            if (!audioRef.current) {
+                audioRef.current = new Audio(newsItem.audio_url)
+                audioRef.current.onended = () => setIsPlaying(false)
+            }
+            audioRef.current.play()
             setIsPlaying(true)
-            audio.onended = () => setIsPlaying(false)
         } else {
             const utterance = new SpeechSynthesisUtterance(newsItem.summary)
             utterance.lang = 'es-ES'

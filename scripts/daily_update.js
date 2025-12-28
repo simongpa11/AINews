@@ -66,7 +66,8 @@ async function generateAudio(text) {
         })
 
         if (!response.ok) {
-            throw new Error(`ElevenLabs API Error: ${response.statusText}`)
+            const errorBody = await response.text()
+            throw new Error(`ElevenLabs API Error: ${response.status} ${response.statusText} - ${errorBody}`)
         }
 
         const arrayBuffer = await response.arrayBuffer()
