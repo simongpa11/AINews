@@ -14,27 +14,23 @@ interface NewspaperProps {
 export default function Newspaper({ news }: NewspaperProps) {
     const book = useRef<any>(null)
     const [mounted, setMounted] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
     const [dimensions, setDimensions] = useState({ width: 500, height: 700 })
 
     useEffect(() => {
         setMounted(true)
         const handleResize = () => {
-            const isMobile = window.innerWidth < 768
+            const mobile = window.innerWidth < 768
+            setIsMobile(mobile)
             const availableWidth = window.innerWidth
             const availableHeight = window.innerHeight
 
-            // On mobile, we want single page view usually, or just fit the screen
-            // react-pageflip handles single page on mobile automatically if configured
-
-            // We calculate page dimensions. 
-            // If landscape (desktop), width is half of total width (approx)
-            // If portrait (mobile), width is full width
+            // On mobile, we want single page view.
+            // Width should be the full width of the screen.
+            // On desktop, width is half the screen (for 2-page spread).
 
             let pageHeight = availableHeight
-            let pageWidth = isMobile ? availableWidth : availableWidth / 2
-
-            // Add some padding/margins if not strictly full bleed
-            // But user wants "ocupar toda la pantalla"
+            let pageWidth = mobile ? availableWidth : availableWidth / 2
 
             setDimensions({ width: pageWidth, height: pageHeight })
         }
@@ -52,7 +48,7 @@ export default function Newspaper({ news }: NewspaperProps) {
             <HTMLFlipBook
                 width={dimensions.width}
                 height={dimensions.height}
-                size="fixed" // Use fixed to respect our calculated dimensions exactly
+                size="fixed"
                 minWidth={300}
                 maxWidth={2000}
                 minHeight={400}
@@ -63,9 +59,14 @@ export default function Newspaper({ news }: NewspaperProps) {
                 className={styles.book}
                 ref={book}
                 flippingTime={1000}
-                usePortrait={true} // Allow single page on mobile
+                usePortrait={isMobile} // Force portrait mode on mobile
                 startZIndex={0}
                 autoSize={true}
+                clickEventForward={true}
+                useMouseEvents={true}
+                swipeDistance={30}
+                showPageCorners={!isMobile}
+                disableFlipByClick={isMobile} // On mobile, swipe is better, click might be accidental
             >
                 <div className={styles.cover} data-density="hard">
                     <h1>AI News Daily</h1>
