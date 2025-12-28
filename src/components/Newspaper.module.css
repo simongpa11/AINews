@@ -5,6 +5,8 @@
     height: 100vh;
     width: 100vw;
     background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+    overflow: hidden;
+    /* Prevent scrollbars */
 }
 
 .book {
@@ -15,10 +17,13 @@
     background-color: #fdfbf7;
     color: #333;
     padding: 40px;
-    border: 1px solid #e0e0e0;
-    overflow: hidden;
+    /* border: 1px solid #e0e0e0; Remove border for full immersion */
+    overflow-y: auto;
+    /* Allow scrolling content if it overflows the page */
     display: flex;
     flex-direction: column;
+    height: 100%;
+    /* Ensure page takes full height */
 }
 
 .cover {
@@ -55,7 +60,8 @@
 
 @media (max-width: 600px) {
     .page {
-        padding: 20px;
+        padding: 15px;
+        /* Smaller padding on mobile */
     }
 
     .cover {

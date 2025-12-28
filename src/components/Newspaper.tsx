@@ -14,9 +14,34 @@ interface NewspaperProps {
 export default function Newspaper({ news }: NewspaperProps) {
     const book = useRef<any>(null)
     const [mounted, setMounted] = useState(false)
+    const [dimensions, setDimensions] = useState({ width: 500, height: 700 })
 
     useEffect(() => {
         setMounted(true)
+        const handleResize = () => {
+            const isMobile = window.innerWidth < 768
+            const availableWidth = window.innerWidth
+            const availableHeight = window.innerHeight
+
+            // On mobile, we want single page view usually, or just fit the screen
+            // react-pageflip handles single page on mobile automatically if configured
+
+            // We calculate page dimensions. 
+            // If landscape (desktop), width is half of total width (approx)
+            // If portrait (mobile), width is full width
+
+            let pageHeight = availableHeight
+            let pageWidth = isMobile ? availableWidth : availableWidth / 2
+
+            // Add some padding/margins if not strictly full bleed
+            // But user wants "ocupar toda la pantalla"
+
+            setDimensions({ width: pageWidth, height: pageHeight })
+        }
+
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     if (!mounted) return null
@@ -25,19 +50,22 @@ export default function Newspaper({ news }: NewspaperProps) {
         <div className={styles.container}>
             {/* @ts-ignore */}
             <HTMLFlipBook
-                width={500}
-                height={700}
-                size="stretch"
+                width={dimensions.width}
+                height={dimensions.height}
+                size="fixed" // Use fixed to respect our calculated dimensions exactly
                 minWidth={300}
-                maxWidth={1000}
+                maxWidth={2000}
                 minHeight={400}
-                maxHeight={1533}
+                maxHeight={2000}
                 maxShadowOpacity={0.5}
                 showCover={true}
                 mobileScrollSupport={true}
                 className={styles.book}
                 ref={book}
                 flippingTime={1000}
+                usePortrait={true} // Allow single page on mobile
+                startZIndex={0}
+                autoSize={true}
             >
                 <div className={styles.cover} data-density="hard">
                     <h1>AI News Daily</h1>
