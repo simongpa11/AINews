@@ -18,11 +18,10 @@ async function main() {
     const imageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995"
 
     // 3. Generate Audio (Mocked)
-    // In reality: Call Google Cloud Text-to-Speech API
-    // Configuration requested:
-    // languageCode: 'es-ES'
-    // name: 'es-ES-Chirp-HD-D' (Premium)
-    // ssmlGender: 'FEMALE' (or MALE)
+    // In reality: Call ElevenLabs API
+    // Voice: Dani - Hurried, Dynamic and Engaging
+    // Voice ID: (You will need to find the specific ID for Dani in ElevenLabs API, e.g., 'FGY2WhTYpPnrIDTdsKH5')
+    // Model: eleven_multilingual_v2 (for best Spanish results)
     const audioUrl = null
 
     // 4. Insert into Supabase
