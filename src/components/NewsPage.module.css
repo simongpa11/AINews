@@ -287,6 +287,22 @@
         /* Mobile height */
     }
 
+    .quickActions {
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pillButton {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
     .articleFooter {
         flex-direction: column;
         align-items: center;
