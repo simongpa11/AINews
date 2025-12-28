@@ -198,8 +198,8 @@
     }
 
     .scrollHint {
-        bottom: 80px;
-        /* Lifted to avoid iPhone home bar/Safari UI */
+        bottom: 140px;
+        /* Lifted significantly to clear Safari's bottom bar */
     }
 
     .podcastButton {
