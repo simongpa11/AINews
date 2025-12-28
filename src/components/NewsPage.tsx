@@ -18,25 +18,25 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const [showFolderSelector, setShowFolderSelector] = useState(false)
 
     // --- Content Extraction Logic ---
-    const fullText = newsItem.summary || ''
+    let fullText = newsItem.summary || ''
 
-    // 1. Extract Lead (First 1-2 sentences)
-    const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [fullText]
-    const lead = sentences.slice(0, 2).join(' ')
-    const remainingText = sentences.slice(2).join(' ')
+    // 1. Extract Priority and Recommendation from anywhere in the text
+    const prioMatch = fullText.match(/Prioridad:\s*(LOW|MED|HIGH|ALERT)/i)
+    const recMatch = fullText.match(/Recomendación:\s*([^\n.]+)/i)
 
-    // 2. Extract Recommendation and Priority
-    const recMatch = remainingText.match(/Recomendación:\s*([^\n.]+)/i)
-    const prioMatch = remainingText.match(/Prioridad:\s*(LOW|MED|HIGH|ALERT)/i)
-
-    const recommendation = recMatch ? recMatch[0] : null
     const priority = prioMatch ? prioMatch[1] : 'MED'
+    const recommendation = recMatch ? recMatch[0] : null
 
-    // Clean analysis text (remove extracted parts)
-    let analysisText = remainingText
-    if (recommendation && recMatch) analysisText = analysisText.replace(recMatch[0], '')
-    if (prioMatch) analysisText = analysisText.replace(prioMatch[0], '')
-    analysisText = analysisText.trim()
+    // 2. Clean the text (remove priority and recommendation tags)
+    let cleanedText = fullText
+    if (prioMatch) cleanedText = cleanedText.replace(prioMatch[0], '')
+    if (recMatch) cleanedText = cleanedText.replace(recMatch[0], '')
+    cleanedText = cleanedText.trim()
+
+    // 3. Extract Lead (First 1-2 sentences of cleaned text)
+    const sentences = cleanedText.match(/[^.!?]+[.!?]+/g) || [cleanedText]
+    const lead = sentences.slice(0, 2).join(' ')
+    const analysisText = sentences.slice(2).join(' ').trim()
 
     // Validation
     const isValid = !!(newsItem.title && newsItem.image_url && newsItem.original_url && lead)
@@ -119,6 +119,9 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
             {/* 1. Cabecera editorial */}
             <div className={styles.editorialHeader}>
                 <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
+                <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
+                    {priority}
+                </span>
                 <span className={styles.section}>Página {pageNumber}</span>
             </div>
 
@@ -152,11 +155,12 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 {analysisText}
             </div>
 
-            {/* 7. Bloque de recomendación y prioridad */}
-            <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
-                {recommendation && <div className={styles.recLine}>{recommendation}</div>}
-                <div className={styles.prioLine}>Prioridad: {priority}</div>
-            </div>
+            {/* 7. Bloque de recomendación */}
+            {recommendation && (
+                <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
+                    <div className={styles.recLine}>{recommendation}</div>
+                </div>
+            )}
 
             {/* 8. Fuente */}
             <div className={styles.sourceLine}>

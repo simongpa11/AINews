@@ -11,6 +11,7 @@
 .editorialHeader {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #002E7D;
     padding-bottom: 8px;
     margin-bottom: 24px;
@@ -20,6 +21,19 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.priorityBadge {
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border: 1.5px solid #002E7D;
+}
+
+.priorityBadge.alert {
+    background: #002E7D;
+    color: #01A7E7;
 }
 
 /* 3. Título principal */
@@ -115,15 +129,7 @@
 
 .recLine {
     font-weight: 700;
-    margin-bottom: 8px;
     font-size: 0.95rem;
-}
-
-.prioLine {
-    font-weight: 800;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 /* 9. Fuente */
