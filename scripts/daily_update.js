@@ -6,14 +6,15 @@ require('dotenv').config({ path: '.env.local' })
 
 // --- CONFIGURATION ---
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY // Note: For production writing, use SERVICE_ROLE_KEY if RLS is strict
+// CRITICAL: Use the SERVICE_ROLE_KEY for the script to bypass RLS policies
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 
 // Voice ID for "Dani" (You might need to verify this ID via ElevenLabs API list)
 // Using a common placeholder ID, but ideally we fetch it.
 // Let's use a known ID or fetch the first one named "Dani".
-const ELEVENLABS_VOICE_ID = 'FGY2WhTYpPnrIDTdsKH5' // Placeholder for Dani
+const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE' // Updated to user requested voice
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_API_KEY || !ELEVENLABS_API_KEY) {
     console.error('Missing API Keys in .env.local')
@@ -25,7 +26,7 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
 
 async function uploadToSupabase(buffer, filename, contentType) {
     const { data, error } = await supabase.storage
-        .from('media')
+        .from('media') // Ensure this matches your bucket name exactly
         .upload(filename, buffer, {
             contentType: contentType,
             upsert: true
