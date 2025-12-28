@@ -89,7 +89,11 @@ async function main() {
                 Cada objeto en el array debe tener:
                 - 'title': Máx 8 palabras, claro y técnico.
                 - 'summary': El resumen factual + 'Por qué importa' + 'Acción recomendada' + 'Prioridad' + 'Fuente'. 
-                  IMPORTANTE: El texto total del campo 'summary' NO debe exceder las 10 líneas de texto para asegurar que quepa en la pantalla.
+                  REGLAS CRÍTICAS DE CONTENIDO:
+                  1. El texto total NO debe exceder las 10 líneas.
+                  2. NO dupliques la 'Acción recomendada' dentro del cuerpo del resumen. Ponla SOLO al final precedida de 'Acción recomendada:'.
+                  3. La 'Acción recomendada' debe ser una sola frase de acción pura, sin incluir la prioridad ni la fuente dentro de esa misma frase.
+                  4. La 'Prioridad' y la 'Fuente' deben ir en sus propias líneas al final de todo.
                 - 'relevance_score': Un número del 1 al 10 basado en la prioridad (LOW=3, MED=6, HIGH=9, ALERT=10).
                 
                 ${extraInstructions}`

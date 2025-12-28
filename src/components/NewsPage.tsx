@@ -21,10 +21,10 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     let fullText = newsItem.summary || ''
 
     // 1. Extract Priority and Recommendation from anywhere in the text
-    // We look for "Prioridad:" or "Priority:" followed by the level
     const prioMatch = fullText.match(/(?:Prioridad|Priority):\s*(LOW|MED|HIGH|ALERT|BAJA|MEDIA|ALTA|ALERTA)/i)
-    // Updated to include "Acción recomendada" and match until end of line or period
-    const recMatch = fullText.match(/(?:Recomendación|Recommendation|Acción recomendada):\s*([^\n]+)/i)
+
+    // Updated to match until end of line OR until it hits "Prioridad" or "Fuente"
+    const recMatch = fullText.match(/(?:Recomendación|Recommendation|Acción recomendada):\s*([\s\S]*?)(?=\s*(?:Prioridad|Priority|Fuente|Source)|$)/i)
 
     // Extract ALL sources
     const sourceMatches = fullText.match(/(?:Fuente|Source):\s*(https?:\/\/[^\s,]+(?:,\s*https?:\/\/[^\s,]+)*)/i)
@@ -47,11 +47,12 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     }
     const priority = priorityMap[rawPriority] || rawPriority
 
-    // Clean recommendation: remove trailing dots if we are going to handle them or just keep what's there
+    // Clean recommendation: remove trailing dots and ensure it doesn't contain priority/source tags
     let recommendation = recMatch ? recMatch[0].trim() : null
     if (recommendation) {
-        // Ensure it doesn't end with double dots
         recommendation = recommendation.replace(/\.\.+$/, '.')
+        // Remove any stray tags that might have leaked in
+        recommendation = recommendation.replace(/(?:Prioridad|Priority|Fuente|Source):.*$/gi, '').trim()
     }
 
     // 2. Clean the text (remove priority, recommendation, and source tags completely)
@@ -60,11 +61,13 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     if (recMatch) cleanedText = cleanedText.replace(recMatch[0], '')
     if (sourceMatches) cleanedText = cleanedText.replace(sourceMatches[0], '')
 
-    // Also catch variations like "Prioridad Baja" or "Fuente: http..."
-    cleanedText = cleanedText.replace(/Prioridad\s+(Baja|Media|Alta|Alerta)/gi, '')
-
-
-    cleanedText = cleanedText.trim()
+    // Also catch variations and ensure no double line breaks are left
+    cleanedText = cleanedText
+        .replace(/Prioridad\s+(Baja|Media|Alta|Alerta)/gi, '')
+        .replace(/(?:Recomendación|Recommendation|Acción recomendada):/gi, '')
+        .replace(/(?:Fuente|Source):/gi, '')
+        .replace(/\n\s*\n/g, '\n')
+        .trim()
 
     const [showSources, setShowSources] = useState(false)
 
