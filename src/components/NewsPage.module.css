@@ -12,6 +12,8 @@
 .scrollableContent {
     flex: 1;
     overflow-y: auto;
+    padding-top: 20px;
+    /* Add space after fixed header */
     padding-bottom: 20px;
     /* Hide scrollbar but allow scrolling */
     scrollbar-width: none;
@@ -29,13 +31,17 @@
     align-items: center;
     border-bottom: 1px solid #002E7D;
     padding-bottom: 8px;
-    margin-bottom: 24px;
-    margin-top: 10px;
+    margin-bottom: 0;
+    /* Remove margin to stick to content */
+    padding-top: 0;
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
+    background: #01A7E7;
+    position: relative;
+    z-index: 5;
 }
 
 .priorityBadge {

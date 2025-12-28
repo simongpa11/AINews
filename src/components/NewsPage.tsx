@@ -145,21 +145,21 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 />
             )}
 
-            <div className={styles.scrollableContent}>
-                {/* 1. Cabecera editorial */}
-                <div className={styles.editorialHeader}>
-                    <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
-                    <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
-                        {priority === 'ALERT' ? (
-                            <span className={styles.prioIcon}><Bell size={12} fill="currentColor" /></span>
-                        ) : (
-                            <span className={`${styles.prioDot} ${styles[priority.toLowerCase() + 'Dot']}`}></span>
-                        )}
-                        {priority}
-                    </span>
-                    <span className={styles.section}>Página {pageNumber}</span>
-                </div>
+            {/* 1. Cabecera editorial */}
+            <div className={styles.editorialHeader}>
+                <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
+                <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
+                    {priority === 'ALERT' ? (
+                        <span className={styles.prioIcon}><Bell size={12} fill="currentColor" /></span>
+                    ) : (
+                        <span className={`${styles.prioDot} ${styles[priority.toLowerCase() + 'Dot']}`}></span>
+                    )}
+                    {priority}
+                </span>
+                <span className={styles.section}>Página {pageNumber}</span>
+            </div>
 
+            <div className={styles.scrollableContent}>
                 {/* 2. Título principal */}
                 <h1 className={styles.mainTitle}>{newsItem.title}</h1>
 
