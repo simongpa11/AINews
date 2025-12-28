@@ -23,7 +23,8 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     // 1. Extract Priority and Recommendation from anywhere in the text
     // We look for "Prioridad:" or "Priority:" followed by the level
     const prioMatch = fullText.match(/(?:Prioridad|Priority):\s*(LOW|MED|HIGH|ALERT|BAJA|MEDIA|ALTA|ALERTA)/i)
-    const recMatch = fullText.match(/(?:Recomendación|Recommendation):\s*([^\n.]+)/i)
+    // Updated to include "Acción recomendada" and match until end of line or period
+    const recMatch = fullText.match(/(?:Recomendación|Recommendation|Acción recomendada):\s*([^\n]+)/i)
 
     // Extract ALL sources
     const sourceMatches = fullText.match(/(?:Fuente|Source):\s*(https?:\/\/[^\s,]+(?:,\s*https?:\/\/[^\s,]+)*)/i)
@@ -46,7 +47,12 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     }
     const priority = priorityMap[rawPriority] || rawPriority
 
-    const recommendation = recMatch ? recMatch[0] : null
+    // Clean recommendation: remove trailing dots if we are going to handle them or just keep what's there
+    let recommendation = recMatch ? recMatch[0].trim() : null
+    if (recommendation) {
+        // Ensure it doesn't end with double dots
+        recommendation = recommendation.replace(/\.\.+$/, '.')
+    }
 
     // 2. Clean the text (remove priority, recommendation, and source tags completely)
     let cleanedText = fullText
