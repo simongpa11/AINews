@@ -2,7 +2,7 @@ import { News } from '@/types'
 import Image from 'next/image'
 import { Play, Bookmark, Pause, Bell, Link, Lightbulb } from 'lucide-react'
 import styles from './NewsPage.module.css'
-import { forwardRef, useState, useRef } from 'react'
+import { forwardRef, useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import FolderSelector from './FolderSelector'
 
@@ -15,7 +15,24 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const [isPlaying, setIsPlaying] = useState(false)
     const [isSaved, setIsSaved] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const sourcesRef = useRef<HTMLDivElement | null>(null)
     const [showFolderSelector, setShowFolderSelector] = useState(false)
+    const [showSources, setShowSources] = useState(false)
+
+    // Close sources popover when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sourcesRef.current && !sourcesRef.current.contains(event.target as Node)) {
+                setShowSources(false)
+            }
+        }
+        if (showSources) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showSources])
 
     // --- Content Extraction Logic ---
     let fullText = newsItem.summary || ''
@@ -180,11 +197,11 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                         {isSaved ? 'Guardado' : 'Guardar'}
                     </button>
 
-                    <div className={styles.sourcesWrapper}>
+                    <div className={styles.sourcesWrapper} ref={sourcesRef}>
                         {showSources && (
                             <div className={styles.sourcesPopover}>
                                 {sources.map((url, idx) => (
-                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
+                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink} onClick={() => setShowSources(false)}>
                                         {new URL(url).hostname}
                                     </a>
                                 ))}
