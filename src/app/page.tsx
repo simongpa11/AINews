@@ -8,6 +8,7 @@ async function getNews() {
   const { data, error } = await supabase
     .from('news')
     .select('*')
+    .order('relevance_score', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(10)
 

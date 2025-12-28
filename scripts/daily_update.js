@@ -104,7 +104,10 @@ async function main() {
     })
 
     const response = JSON.parse(completion.choices[0].message.content)
-    const newsItems = response.news_items || []
+    let newsItems = response.news_items || []
+
+    // Sort news items by relevance_score (Priority) descending: ALERT(10) > HIGH(9) > MED(6) > LOW(3)
+    newsItems.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0))
 
     console.log(`Found ${newsItems.length} news items.`)
 
@@ -177,12 +180,16 @@ async function main() {
 
     // 4. Save podcast metadata
     if (podcastUrl) {
-        await supabase.from('daily_metadata').insert({
+        const { error: metaError } = await supabase.from('daily_metadata').insert({
             date: new Date().toISOString().split('T')[0],
             podcast_url: podcastUrl,
             podcast_script: podcastScript
         })
-        console.log('Daily podcast metadata saved.')
+        if (metaError) {
+            console.error('Error saving podcast metadata:', metaError)
+        } else {
+            console.log('Daily podcast metadata saved.')
+        }
     }
 
     console.log('Daily update completed successfully!')
