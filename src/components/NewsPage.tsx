@@ -1,6 +1,6 @@
 import { News } from '@/types'
 import Image from 'next/image'
-import { Play, Bookmark, Pause, Bell } from 'lucide-react'
+import { Play, Bookmark, Pause, Bell, Link } from 'lucide-react'
 import styles from './NewsPage.module.css'
 import { forwardRef, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -86,7 +86,6 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 audioRef.current.pause()
                 audioRef.current.currentTime = 0
             }
-            window.speechSynthesis.cancel()
             setIsPlaying(false)
             return
         }
@@ -180,6 +179,22 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                         <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
                         {isSaved ? 'Guardado' : 'Guardar'}
                     </button>
+
+                    <div className={styles.sourcesWrapper}>
+                        {showSources && (
+                            <div className={styles.sourcesPopover}>
+                                {sources.map((url, idx) => (
+                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
+                                        {new URL(url).hostname}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                        <button className={styles.pillButton} onClick={() => setShowSources(!showSources)}>
+                            <Link size={18} />
+                            Fuentes ({sources.length})
+                        </button>
+                    </div>
                 </div>
 
                 {/* 5. Lead editorial */}
@@ -199,43 +214,10 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                     </div>
                 )}
 
-                {/* Mobile Sources Chip (End of scroll) */}
-                <div className={styles.mobileSourcesWrapper}>
-                    <div className={styles.sourcesWrapper}>
-                        {showSources && (
-                            <div className={styles.sourcesPopover}>
-                                {sources.map((url, idx) => (
-                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
-                                        {new URL(url).hostname}
-                                    </a>
-                                ))}
-                            </div>
-                        )}
-                        <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
-                            Fuentes ({sources.length})
-                        </button>
-                    </div>
-                </div>
             </div>
 
-            {/* 8 & 9. Footer con Fuentes y Link */}
+            {/* 8 & 9. Footer con Link */}
             <div className={styles.articleFooter}>
-                <div className={styles.desktopSourcesWrapper}>
-                    <div className={styles.sourcesWrapper}>
-                        {showSources && (
-                            <div className={styles.sourcesPopover}>
-                                {sources.map((url, idx) => (
-                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={styles.popoverLink}>
-                                        {new URL(url).hostname}
-                                    </a>
-                                ))}
-                            </div>
-                        )}
-                        <button className={styles.sourcesChip} onClick={() => setShowSources(!showSources)}>
-                            Fuentes ({sources.length})
-                        </button>
-                    </div>
-                </div>
                 <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
                     Leer artículo completo →
                 </a>
