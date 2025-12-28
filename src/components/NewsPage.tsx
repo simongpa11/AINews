@@ -228,8 +228,13 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                 {recommendation && (
                     <div className={`${styles.recommendationBlock} ${priority === 'ALERT' ? styles.alert : ''}`}>
                         <div className={styles.recLine}>
-                            <Lightbulb size={18} className={styles.recIcon} />
-                            <strong>Acción recomendada:</strong> {recommendation.replace(/^(?:Recomendación|Recommendation|Acción recomendada):\s*/i, '')}
+                            <div className={styles.recHeader}>
+                                <Lightbulb size={18} className={styles.recIcon} />
+                                <strong>Acción recomendada:</strong>
+                            </div>
+                            <div className={styles.recText}>
+                                {recommendation.replace(/^(?:Recomendación|Recommendation|Acción recomendada):\s*/i, '')}
+                            </div>
                         </div>
                     </div>
                 )}

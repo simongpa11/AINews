@@ -184,19 +184,30 @@
 }
 
 .recLine {
-    font-weight: 700;
     font-size: 0.95rem;
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: column;
+    gap: 8px;
     color: #002E7D;
+}
+
+.recHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recText {
+    font-weight: 400;
+    line-height: 1.4;
+    padding-left: 26px;
+    /* Align with text after icon */
 }
 
 .recIcon {
     color: #FFD700;
     /* Yellow lightbulb */
     flex-shrink: 0;
-    margin-top: 2px;
     filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
 }
 
