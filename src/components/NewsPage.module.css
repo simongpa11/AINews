@@ -301,10 +301,10 @@
     .quickActions {
         flex-wrap: nowrap;
         gap: 6px;
-        overflow-x: auto;
+        overflow-x: visible;
+        /* Crucial: allow popover to be seen */
         padding-bottom: 5px;
         margin-bottom: 20px;
-        -webkit-overflow-scrolling: touch;
     }
 
     .pillButton {
@@ -312,6 +312,17 @@
         font-size: 0.75rem;
         white-space: nowrap;
         flex-shrink: 0;
+    }
+
+    .sourcesPopover {
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: auto;
+        right: 0;
+        /* Align to right on mobile to avoid cutting off */
+        width: 200px;
+        min-width: unset;
+        z-index: 999;
     }
 
     .articleFooter {
@@ -322,12 +333,4 @@
         border-top: 1px solid #eee;
     }
 
-    .sourcesWrapper {
-        width: 100%;
-    }
-
-    .sourcesPopover {
-        width: 100%;
-        min-width: unset;
-    }
 }
