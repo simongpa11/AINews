@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { News } from '@/types'
 import NewsPage from './NewsPage'
 import IndexPage from './IndexPage'
+import LibraryPage from './LibraryPage'
 import styles from './Newspaper.module.css'
 
 interface NewspaperProps {
@@ -53,6 +54,10 @@ export default function Newspaper({ news }: NewspaperProps) {
                         <NewsPage newsItem={item} pageNumber={index + 1} />
                     </div>
                 ))}
+
+                <div className={styles.page}>
+                    <LibraryPage />
+                </div>
 
                 <div className={styles.page}>
                     <div className={styles.backCover}>

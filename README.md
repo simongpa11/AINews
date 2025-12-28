@@ -29,11 +29,9 @@ A modern, newspaper-style web application for daily AI news summaries.
 
 4.  **Nano Banana 2.0 & Audio**:
     -   The app is configured to display images and play audio from URLs provided in the database.
-    -   To fully automate generation, you would need a backend script (e.g., a Supabase Edge Function) to:
-        -   Fetch daily summaries.
-        -   Generate images using Nano Banana 2.0 (or Google Gemini/Imagen).
-        -   Generate audio using Google Cloud TTS or ElevenLabs.
-        -   Insert the data into the `news` table.
+    -   **Daily Updates**:
+        -   Use `node scripts/daily_update.js` to simulate a daily update.
+        -   For production, set up a Cron Job (e.g., GitHub Actions) to run this script daily, replacing the mock data with real API calls to ChatGPT and Nano Banana.
 
 ## Tech Stack
 

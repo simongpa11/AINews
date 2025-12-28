@@ -1,0 +1,116 @@
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    background: #fdfbf7;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sectionTitle {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    color: #666;
+    margin: 20px 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.folderCard {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.folderCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: #333;
+}
+
+.count {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.newsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.newsItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.newsInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.newsTitle {
+    font-weight: 600;
+    font-family: 'Merriweather', serif;
+    font-size: 0.9rem;
+}
+
+.newsDate {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.empty {
+    font-style: italic;
+    color: #999;
+    text-align: center;
+    margin-top: 20px;
+}

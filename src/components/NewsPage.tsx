@@ -4,6 +4,7 @@ import { Play, Bookmark, Pause } from 'lucide-react'
 import styles from './NewsPage.module.css'
 import { forwardRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import FolderSelector from './FolderSelector'
 
 interface NewsPageProps {
     newsItem: News
@@ -35,20 +36,34 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
         }
     }
 
-    const handleSave = async () => {
+    const [showFolderSelector, setShowFolderSelector] = useState(false)
+
+    const handleSaveClick = async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-            alert('Please login to save news')
+            // For demo purposes, we might want to allow a dummy login or alert
+            // But since we don't have a login UI, let's just alert
+            const email = prompt('Enter email to login/signup (Magic Link):')
+            if (email) {
+                await supabase.auth.signInWithOtp({ email })
+                alert('Check your email for the login link!')
+            }
             return
         }
+        setShowFolderSelector(true)
+    }
+
+    const handleFolderSelect = async (folderId: string | null) => {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
         const { error } = await supabase.from('saved_news').insert({
             news_id: newsItem.id,
-            user_id: user.id
+            user_id: user.id,
+            folder_id: folderId
         })
 
         if (error) {
-            // Check for duplicate error (code 23505 for unique violation)
             if (error.code === '23505') {
                 alert('Already saved!')
                 setIsSaved(true)
@@ -59,10 +74,17 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
         } else {
             setIsSaved(true)
         }
+        setShowFolderSelector(false)
     }
 
     return (
         <div className={styles.container} ref={ref}>
+            {showFolderSelector && (
+                <FolderSelector
+                    onSelect={handleFolderSelect}
+                    onClose={() => setShowFolderSelector(false)}
+                />
+            )}
             <div className={styles.header}>
                 <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString()}</span>
                 <span className={styles.pageNumber}>Page {pageNumber}</span>
@@ -81,7 +103,7 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                     {isPlaying ? 'Stop' : 'Listen'}
                 </button>
-                <button className={styles.saveButton} onClick={handleSave} disabled={isSaved}>
+                <button className={styles.saveButton} onClick={handleSaveClick} disabled={isSaved}>
                     <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
                     {isSaved ? 'Saved' : 'Save'}
                 </button>
