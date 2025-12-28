@@ -1,20 +1,13 @@
 const { createClient } = require('@supabase/supabase-js')
 const OpenAI = require('openai')
-const fs = require('fs')
-const path = require('path')
 require('dotenv').config({ path: '.env.local' })
 
 // --- CONFIGURATION ---
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-// CRITICAL: Use the SERVICE_ROLE_KEY for the script to bypass RLS policies
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
-
-// Voice ID for "Dani" (You might need to verify this ID via ElevenLabs API list)
-// Using a common placeholder ID, but ideally we fetch it.
-// Let's use a known ID or fetch the first one named "Dani".
-const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE' // Updated to user requested voice
+const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE'
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_API_KEY || !ELEVENLABS_API_KEY) {
     console.error('Missing API Keys in .env.local')
@@ -26,15 +19,13 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
 
 async function uploadToSupabase(buffer, filename, contentType) {
     const { data, error } = await supabase.storage
-        .from('media') // Ensure this matches your bucket name exactly
+        .from('media')
         .upload(filename, buffer, {
             contentType: contentType,
             upsert: true
         })
 
     if (error) {
-        // If bucket doesn't exist, we might fail here. 
-        // Creating buckets via JS client requires service role usually.
         console.error('Error uploading to Supabase:', error)
         return null
     }
@@ -105,27 +96,7 @@ async function main() {
             },
             {
                 role: "user",
-                content: `PROMPT — Informe diario LLM & Enterprise AI (UE-focused)
-
-                ÁMBITO DE BÚSQUEDA (obligatorio):
-                1. Modelos y plataformas LLM (Gemini, GPT, Anthropic, Mistral, etc.)
-                2. Frameworks de agentes y automatización (ADK, multi-agent, orquestadores).
-                3. Plataformas conversacionales y de voz enterprise (Dialogflow CX, Azure Bot, PolyAI, etc.)
-                4. Generación multimodal (imagen / vídeo / audio).
-                5. Seguridad, cumplimiento y gobernanza (GDPR / AI Act / UE).
-                6. Partners e integradores.
-
-                FUENTES: Blogs oficiales, comunicados UE, arXiv, medios tech reputados.
-
-                FORMATO DE CADA NOTICIA:
-                • Título
-                • Resumen (1 línea factual)
-                • Por qué importa para nosotros (1 línea)
-                • Acción recomendada (1 frase imperativa)
-                • Nivel de prioridad (LOW / MED / HIGH / ALERT)
-                • Fuente (URL directa)
-
-                FILTRADO: 3–8 items diarios. Estilo profesional, técnico, conciso, sin emojis.`
+                content: `PROMPT — Informe diario LLM & Enterprise AI (UE-focused)`
             }
         ],
         model: "gpt-4-turbo-preview",
@@ -135,12 +106,43 @@ async function main() {
     const response = JSON.parse(completion.choices[0].message.content)
     const newsItems = response.news_items || []
 
-    console.log(`Found ${newsItems.news_items?.length || newsItems.length} news items.`)
+    console.log(`Found ${newsItems.length} news items.`)
 
+    // 2. Generate Podcast Script and Audio
+    console.log('Generating Podcast Script...')
+    const podcastPrompt = `Eres un locutor de podcast profesional, carismático y técnico. 
+    Tu tarea es redactar un guion breve (máx 2 minutos) resumiendo las noticias de hoy de forma fluida.
+    
+    NOTICIAS DE HOY:
+    ${newsItems.map((n, i) => `Noticia ${i + 1}: ${n.title}. Contenido: ${n.summary}`).join('\n\n')}
+    
+    INSTRUCCIONES:
+    - Empieza con una intro enérgica: "¡Bienvenidos a Noticias IA Diarias! Soy Dani y estas son las claves tecnológicas de hoy..."
+    - Conecta las noticias de forma natural.
+    - Menciona por qué cada noticia es crítica para la empresa.
+    - Despídete invitando a leer el periódico completo.
+    - Devuelve SOLO el texto del guion, sin etiquetas de locución.`
+
+    const podcastCompletion = await openai.chat.completions.create({
+        messages: [{ role: "user", content: podcastPrompt }],
+        model: "gpt-4-turbo-preview",
+    })
+
+    const podcastScript = podcastCompletion.choices[0].message.content
+    const podcastAudioBuffer = await generateAudio(podcastScript)
+
+    let podcastUrl = null
+    if (podcastAudioBuffer) {
+        const podcastFilename = `podcast_${Date.now()}.mp3`
+        podcastUrl = await uploadToSupabase(podcastAudioBuffer, podcastFilename, 'audio/mpeg')
+        console.log('Podcast generated:', podcastUrl)
+    }
+
+    // 3. Process individual news items
     for (const item of newsItems) {
         console.log('Processing:', item.title)
 
-        // 2. Generate Image (Using DALL-E 3)
+        // Generate Image
         console.log('Generating image...')
         const imageResponse = await openai.images.generate({
             model: "dall-e-3",
@@ -149,13 +151,11 @@ async function main() {
             size: "1024x1024",
         })
         const imageUrlTemp = imageResponse.data[0].url
-
-        // Download and upload image
         const imageBuffer = await fetch(imageUrlTemp).then(res => res.arrayBuffer()).then(Buffer.from)
         const imageFileName = `news-image-${Date.now()}.png`
         const publicImageUrl = await uploadToSupabase(imageBuffer, imageFileName, 'image/png')
 
-        // 3. Generate Audio
+        // Generate individual Audio
         const audioBuffer = await generateAudio(item.summary)
         let publicAudioUrl = null
         if (audioBuffer) {
@@ -163,26 +163,29 @@ async function main() {
             publicAudioUrl = await uploadToSupabase(audioBuffer, audioFileName, 'audio/mpeg')
         }
 
-        // 4. Insert into DB
-        console.log('Inserting into database...')
-        const { error } = await supabase
-            .from('news')
-            .insert({
-                title: item.title,
-                summary: item.summary,
-                content: item.summary,
-                image_url: publicImageUrl || imageUrlTemp,
-                audio_url: publicAudioUrl,
-                relevance_score: item.relevance_score || 7,
-                original_url: item.source || 'https://openai.com'
-            })
-
-        if (error) {
-            console.error('Error inserting news:', error)
-        } else {
-            console.log('Success! News inserted:', item.title)
-        }
+        // Insert into DB
+        await supabase.from('news').insert({
+            title: item.title,
+            summary: item.summary,
+            content: item.summary,
+            image_url: publicImageUrl,
+            audio_url: publicAudioUrl,
+            relevance_score: item.relevance_score || 7,
+            original_url: item.source || 'https://openai.com'
+        })
     }
+
+    // 4. Save podcast metadata
+    if (podcastUrl) {
+        await supabase.from('daily_metadata').insert({
+            date: new Date().toISOString().split('T')[0],
+            podcast_url: podcastUrl,
+            podcast_script: podcastScript
+        })
+        console.log('Daily podcast metadata saved.')
+    }
+
+    console.log('Daily update completed successfully!')
 }
 
 main()
