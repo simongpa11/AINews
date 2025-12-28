@@ -1,6 +1,6 @@
 import { News } from '@/types'
 import Image from 'next/image'
-import { Play, Bookmark, Pause } from 'lucide-react'
+import { Play, Bookmark, Pause, Bell } from 'lucide-react'
 import styles from './NewsPage.module.css'
 import { forwardRef, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -120,6 +120,11 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
             <div className={styles.editorialHeader}>
                 <span className={styles.date}>{new Date(newsItem.created_at).toLocaleDateString('es-ES')}</span>
                 <span className={`${styles.priorityBadge} ${styles[priority.toLowerCase()]}`}>
+                    {priority === 'ALERT' ? (
+                        <span className={styles.prioIcon}><Bell size={12} fill="currentColor" /></span>
+                    ) : (
+                        <span className={`${styles.prioDot} ${styles[priority.toLowerCase() + 'Dot']}`}></span>
+                    )}
                     {priority}
                 </span>
                 <span className={styles.section}>Página {pageNumber}</span>

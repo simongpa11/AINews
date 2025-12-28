@@ -24,6 +24,9 @@
 }
 
 .priorityBadge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 2px 10px;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -31,9 +34,39 @@
     border: 1.5px solid #002E7D;
 }
 
+.prioDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.lowDot {
+    background-color: #28a745;
+}
+
+.medDot {
+    background-color: #ffc107;
+}
+
+.highDot {
+    background-color: #dc3545;
+}
+
+.prioIcon {
+    display: flex;
+    align-items: center;
+    color: #ffc107;
+    /* Yellow bell */
+}
+
 .priorityBadge.alert {
     background: #002E7D;
     color: #01A7E7;
+}
+
+.priorityBadge.alert .prioIcon {
+    color: #ffc107;
 }
 
 /* 3. Título principal */
