@@ -5,55 +5,59 @@ import { News } from '@/types'
 export const revalidate = 3600 // Revalidate every hour
 
 async function getNews() {
-  const today = new Date().toISOString().split('T')[0]
-  const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
-  // Fetch today's news
-  const { data: todayData, error: todayError } = await supabase
+  const { data, error } = await supabase
     .from('news')
     .select('*')
-    .gte('created_at', today)
-    .order('relevance_score', { ascending: false })
-
-  // Fetch archive news (last 15 days, excluding today)
-  const { data: archiveData, error: archiveError } = await supabase
-    .from('news')
-    .select('*')
-    .lt('created_at', today)
-    .gte('created_at', fifteenDaysAgo)
+    .gte('created_at', sevenDaysAgo)
     .order('created_at', { ascending: false })
     .order('relevance_score', { ascending: false })
 
-  if (todayError || archiveError) {
-    console.error('Error fetching news:', todayError || archiveError)
-    return { today: [], archive: [] }
+  if (error) {
+    console.error('Error fetching news:', error)
+    return []
   }
 
-  return {
-    today: (todayData || []) as News[],
-    archive: (archiveData || []) as News[]
-  }
+  // Group by date
+  const grouped = (data || []).reduce((acc: { [key: string]: News[] }, item: News) => {
+    const date = new Date(item.created_at).toISOString().split('T')[0]
+    if (!acc[date]) acc[date] = []
+    acc[date].push(item)
+    return acc
+  }, {})
+
+  // Convert to array of editions
+  return Object.entries(grouped).map(([date, items]) => ({
+    date,
+    news: items as News[]
+  }))
 }
 
 export default async function Home() {
-  const { today, archive } = await getNews()
+  const editions = await getNews()
 
-  // Mock data if no news found today (for demo purposes)
-  const displayToday = today.length > 0 ? today : [
+  // If no news at all, create a mock edition for today
+  const finalEditions = editions.length > 0 ? editions : [
     {
-      id: 'mock-1',
-      title: 'Bienvenido a Noticias IA Diarias',
-      summary: 'Esta es una demostración de la aplicación Noticias IA Diarias. Una vez conectado a la base de datos y poblado con resúmenes de ChatGPT, tus noticias diarias aparecerán aquí.',
-      relevance_score: 10,
-      created_at: new Date().toISOString(),
-      image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
-      original_url: 'https://github.com/simongpa11/AINews'
+      date: new Date().toISOString().split('T')[0],
+      news: [
+        {
+          id: 'mock-1',
+          title: 'Bienvenido a Noticias IA Diarias',
+          summary: 'Esta es una demostración de la aplicación Noticias IA Diarias. Una vez conectado a la base de datos y poblado con resúmenes de ChatGPT, tus noticias diarias aparecerán aquí.',
+          relevance_score: 10,
+          created_at: new Date().toISOString(),
+          image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
+          original_url: 'https://github.com/simongpa11/AINews'
+        }
+      ]
     }
   ]
 
   return (
     <main>
-      <Newspaper news={displayToday} archive={archive} />
+      <Newspaper editions={finalEditions} />
     </main>
   )
 }
