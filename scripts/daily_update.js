@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js')
 const OpenAI = require('openai')
+const textToSpeech = require('@google-cloud/text-to-speech')
 require('dotenv').config({ path: '.env.local' })
 
 // --- CONFIGURATION ---
@@ -8,6 +9,8 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE'
+
+const googleTtsClient = new textToSpeech.TextToSpeechClient();
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_API_KEY || !ELEVENLABS_API_KEY) {
     console.error('Missing API Keys in .env.local')
@@ -37,7 +40,7 @@ async function uploadToSupabase(buffer, filename, contentType) {
     return publicData.publicUrl
 }
 
-async function generateAudio(text) {
+async function generateAudioElevenLabs(text) {
     console.log('Generating audio with ElevenLabs...')
     try {
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
@@ -64,10 +67,51 @@ async function generateAudio(text) {
         const arrayBuffer = await response.arrayBuffer()
         return Buffer.from(arrayBuffer)
     } catch (error) {
-        console.error('Error generating audio:', error)
+        console.error('Error generating audio with ElevenLabs:', error)
         return null
     }
 }
+
+async function generateAudioGoogle(text) {
+    console.log('Generating audio with Google Cloud TTS...')
+    try {
+        const request = {
+            input: { text: text },
+            voice: {
+                languageCode: 'es-ES',
+                name: 'es-ES-Neural2-G',
+                ssmlGender: 'MALE'
+            },
+            audioConfig: { audioEncoding: 'MP3' },
+        };
+
+        const [response] = await googleTtsClient.synthesizeSpeech(request);
+        return response.audioContent;
+    } catch (error) {
+        console.error('Error generating audio with Google:', error)
+        return null
+    }
+}
+
+async function generateAudioOpenAI(text) {
+    console.log('Generating audio with OpenAI TTS...')
+    try {
+        const mp3 = await openai.audio.speech.create({
+            model: "tts-1",
+            voice: "onyx", // Onyx is a deep, professional male voice
+            input: text,
+        });
+
+        const buffer = Buffer.from(await mp3.arrayBuffer());
+        return buffer;
+    } catch (error) {
+        console.error('Error generating audio with OpenAI:', error)
+        return null
+    }
+}
+
+// Default generator
+const generateAudio = generateAudioOpenAI;
 
 async function main() {
     console.log('Starting daily update...')
@@ -81,27 +125,27 @@ async function main() {
         messages: [
             {
                 role: "system",
-                content: `Eres un analista técnico senior especializado en IA enterprise, LLMs y cumplimiento regulatorio en la UE. 
-                Tu tarea es buscar, filtrar y redactar un informe diario con las novedades más relevantes de las últimas 24–48 horas.
-                
-                REGLAS DE FORMATO:
-                Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos.
-                Cada objeto en el array debe tener:
-                - 'title': Máx 8 palabras, claro y técnico.
-                - 'summary': El resumen factual + 'Por qué importa' + 'Acción recomendada' + 'Prioridad' + 'Fuente'. 
-                  REGLAS CRÍTICAS DE CONTENIDO:
-                  1. El texto total NO debe exceder las 10 líneas.
-                  2. NO dupliques la 'Acción recomendada' dentro del cuerpo del resumen. Ponla SOLO al final precedida de 'Acción recomendada:'.
-                  3. La 'Acción recomendada' debe ser una sola frase de acción pura, sin incluir la prioridad ni la fuente dentro de esa misma frase.
-                  4. La 'Prioridad' y la 'Fuente' deben ir en sus propias líneas al final de todo.
-                  5. REGLA DE ORO PARA FUENTES: Debes incluir la URL real de la noticia original (ej: TechCrunch, Reuters, blog oficial). NUNCA pongas 'OpenAI' o 'ChatGPT' como fuente. Si no tienes la URL exacta, busca la fuente primaria más probable.
-                - 'relevance_score': Un número del 1 al 10 basado en la prioridad (LOW=3, MED=6, HIGH=9, ALERT=10).
+                content: `Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos. Cada objeto debe tener: 'title', 'summary', 'relevance_score' y 'source'.
+
+OBJETIVO
+Detectar y resumir las noticias más importantes de las últimas 24 horas sobre IA, LLMs y automatización empresarial.
+
+TEMÁTICAS PRIORITARIAS:
+- OpenAI, Gemini, Claude, Grok.
+- Google AI (NotebookLLM, Vertex, etc).
+- Automatización (n8n, agentes).
+- Regulación IA en la UE.
+
+FORMATO DEL RESUMEN:
+Incluye: Hechos + Por qué importa + Acción recomendada.
+                 
+TONO: Profesional y directo.
                 
                 ${extraInstructions}`
             },
             {
                 role: "user",
-                content: `PROMPT — Informe diario LLM & Enterprise AI (UE-focused)`
+                content: `PROMPT — Informe diario LLM & Enterprise AI`
             }
         ],
         model: "gpt-4-turbo-preview",

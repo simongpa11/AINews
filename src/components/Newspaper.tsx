@@ -5,7 +5,7 @@ import NewsPage from './NewsPage'
 import IndexPage from './IndexPage'
 import LibraryPage from './LibraryPage'
 import styles from './Newspaper.module.css'
-import { ChevronDown, ChevronUp, Mic, Play, Pause } from 'lucide-react'
+import { ChevronDown, ChevronUp, Headphones, Play, Pause } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface NewspaperProps {
@@ -127,7 +127,7 @@ function DailyEdition({ edition, isToday, onGoToToday }: DailyEditionProps) {
                     {podcastUrl && (
                         <button className={styles.podcastButton} onClick={handlePodcastToggle}>
                             <div className={styles.podcastIconWrapper}>
-                                {isPodcastPlaying ? <Pause size={24} /> : <Mic size={24} />}
+                                {isPodcastPlaying ? <Pause size={24} /> : <Headphones size={24} />}
                             </div>
                             <span>{isPodcastPlaying ? 'Pausar Podcast' : 'Escuchar Podcast'}</span>
                         </button>
