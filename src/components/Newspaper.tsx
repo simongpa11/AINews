@@ -4,15 +4,17 @@ import { News } from '@/types'
 import NewsPage from './NewsPage'
 import IndexPage from './IndexPage'
 import LibraryPage from './LibraryPage'
+import ArchivePage from './ArchivePage'
 import styles from './Newspaper.module.css'
 import { ChevronDown, ChevronUp, Mic, Play, Pause } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface NewspaperProps {
     news: News[]
+    archive: News[]
 }
 
-export default function Newspaper({ news }: NewspaperProps) {
+export default function Newspaper({ news, archive }: NewspaperProps) {
     const [mounted, setMounted] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
     const [podcastUrl, setPodcastUrl] = useState<string | null>(null)
@@ -22,6 +24,12 @@ export default function Newspaper({ news }: NewspaperProps) {
     useEffect(() => {
         setMounted(true)
         fetchPodcast()
+
+        // Scroll to cover on load (it will be after the archive)
+        setTimeout(() => {
+            const cover = document.getElementById('page-cover')
+            cover?.scrollIntoView({ behavior: 'instant' })
+        }, 100)
     }, [])
 
     const fetchPodcast = async () => {
@@ -55,20 +63,29 @@ export default function Newspaper({ news }: NewspaperProps) {
 
     if (!mounted) return null
 
-    const totalPages = news.length + 3 // Cover, Index, News..., Library, BackCover
-
-    const navigateTo = (index: number) => {
-        setCurrentPage(index)
-        const element = document.getElementById(`page-${index}`)
+    const navigateTo = (id: string) => {
+        const element = document.getElementById(id)
         element?.scrollIntoView({ behavior: 'smooth' })
     }
 
     return (
         <div className={styles.mainContainer}>
             <div className={styles.scrollContainer}>
+                {/* Archive (Scroll UP from cover) */}
+                <section id="page-archive" className={styles.fullPage}>
+                    <div className={styles.pageContent}>
+                        <ArchivePage archive={archive} onNavigateToNews={() => { }} />
+                    </div>
+                </section>
+
                 {/* Cover */}
-                <section id="page-0" className={styles.fullPage}>
+                <section id="page-cover" className={styles.fullPage}>
                     <div className={styles.cover}>
+                        <div className={styles.archiveHint} onClick={() => navigateTo('page-archive')}>
+                            <ChevronUp className={styles.bounceUp} />
+                            <span>Hemeroteca (Últimos 15 días)</span>
+                        </div>
+
                         <h1>Noticias IA Diarias</h1>
                         <p>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
 
@@ -89,15 +106,15 @@ export default function Newspaper({ news }: NewspaperProps) {
                 </section>
 
                 {/* Index */}
-                <section id="page-1" className={styles.fullPage}>
+                <section id="page-index" className={styles.fullPage}>
                     <div className={styles.pageContent}>
-                        <IndexPage news={news} onNavigate={(index) => navigateTo(index + 2)} />
+                        <IndexPage news={news} onNavigate={(index) => navigateTo(`page-news-${index}`)} />
                     </div>
                 </section>
 
                 {/* News Pages */}
                 {news.map((item, index) => (
-                    <section key={item.id} id={`page-${index + 2}`} className={styles.fullPage}>
+                    <section key={item.id} id={`page-news-${index}`} className={styles.fullPage}>
                         <div className={styles.pageContent}>
                             <NewsPage newsItem={item} pageNumber={index + 1} />
                         </div>
@@ -105,17 +122,17 @@ export default function Newspaper({ news }: NewspaperProps) {
                 ))}
 
                 {/* Library */}
-                <section id={`page-${news.length + 2}`} className={styles.fullPage}>
+                <section id="page-library" className={styles.fullPage}>
                     <div className={styles.pageContent}>
                         <LibraryPage />
                     </div>
                 </section>
 
                 {/* Back Cover */}
-                <section id={`page-${news.length + 3}`} className={styles.fullPage}>
+                <section id="page-backcover" className={styles.fullPage}>
                     <div className={styles.backCover}>
                         <h2>Fin de la Edición</h2>
-                        <button onClick={() => navigateTo(0)} className={styles.topButton}>
+                        <button onClick={() => navigateTo('page-cover')} className={styles.topButton}>
                             <ChevronUp /> Volver al inicio
                         </button>
                     </div>

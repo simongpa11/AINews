@@ -5,49 +5,55 @@ import { News } from '@/types'
 export const revalidate = 3600 // Revalidate every hour
 
 async function getNews() {
-  const { data, error } = await supabase
+  const today = new Date().toISOString().split('T')[0]
+  const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+  // Fetch today's news
+  const { data: todayData, error: todayError } = await supabase
     .from('news')
     .select('*')
+    .gte('created_at', today)
     .order('relevance_score', { ascending: false })
-    .order('created_at', { ascending: false })
-    .limit(10)
 
-  if (error) {
-    console.error('Error fetching news:', error)
-    return []
+  // Fetch archive news (last 15 days, excluding today)
+  const { data: archiveData, error: archiveError } = await supabase
+    .from('news')
+    .select('*')
+    .lt('created_at', today)
+    .gte('created_at', fifteenDaysAgo)
+    .order('created_at', { ascending: false })
+    .order('relevance_score', { ascending: false })
+
+  if (todayError || archiveError) {
+    console.error('Error fetching news:', todayError || archiveError)
+    return { today: [], archive: [] }
   }
 
-  return data as News[]
+  return {
+    today: (todayData || []) as News[],
+    archive: (archiveData || []) as News[]
+  }
 }
 
 export default async function Home() {
-  const news = await getNews()
+  const { today, archive } = await getNews()
 
-  // Mock data if no news found (for demo purposes)
-  const displayNews = news.length > 0 ? news : [
+  // Mock data if no news found today (for demo purposes)
+  const displayToday = today.length > 0 ? today : [
     {
-      id: '1',
+      id: 'mock-1',
       title: 'Bienvenido a Noticias IA Diarias',
       summary: 'Esta es una demostración de la aplicación Noticias IA Diarias. Una vez conectado a la base de datos y poblado con resúmenes de ChatGPT, tus noticias diarias aparecerán aquí.',
       relevance_score: 10,
       created_at: new Date().toISOString(),
-      image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995', // AI image placeholder
+      image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
       original_url: 'https://github.com/simongpa11/AINews'
-    },
-    {
-      id: '2',
-      title: 'Lanzamiento de Nano Banana 2.0',
-      summary: 'Google ha lanzado Nano Banana 2.0, un modelo de generación de imágenes revolucionario. Promete un mejor razonamiento y renderizado de texto.',
-      relevance_score: 9,
-      created_at: new Date().toISOString(),
-      image_url: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485',
-      original_url: '#'
     }
   ]
 
   return (
     <main>
-      <Newspaper news={displayNews} />
+      <Newspaper news={displayToday} archive={archive} />
     </main>
   )
 }

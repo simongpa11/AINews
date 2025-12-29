@@ -197,6 +197,26 @@ async function main() {
         }
     }
 
+    // 5. Cleanup: Delete news and metadata older than 15 days
+    console.log('Cleaning up old news...')
+    const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+    const { error: cleanupNewsError } = await supabase
+        .from('news')
+        .delete()
+        .lt('created_at', fifteenDaysAgo)
+
+    const { error: cleanupMetaError } = await supabase
+        .from('daily_metadata')
+        .delete()
+        .lt('date', fifteenDaysAgo)
+
+    if (cleanupNewsError || cleanupMetaError) {
+        console.error('Error during cleanup:', cleanupNewsError || cleanupMetaError)
+    } else {
+        console.log('Cleanup completed.')
+    }
+
     console.log('Daily update completed successfully!')
 }
 
