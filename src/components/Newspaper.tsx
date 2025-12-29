@@ -21,12 +21,23 @@ export default function Newspaper({ editions }: NewspaperProps) {
 
     useEffect(() => {
         setMounted(true)
+        // Scroll to today (the last edition) on mount
+        setTimeout(() => {
+            if (horizontalScrollRef.current) {
+                horizontalScrollRef.current.scrollLeft = horizontalScrollRef.current.scrollWidth
+            }
+        }, 100)
     }, [])
 
     if (!mounted) return null
 
     const scrollToToday = () => {
-        horizontalScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' })
+        if (horizontalScrollRef.current) {
+            horizontalScrollRef.current.scrollTo({
+                left: horizontalScrollRef.current.scrollWidth,
+                behavior: 'smooth'
+            })
+        }
     }
 
     return (
@@ -35,7 +46,7 @@ export default function Newspaper({ editions }: NewspaperProps) {
                 <div key={edition.date} className={styles.editionWrapper}>
                     <DailyEdition
                         edition={edition}
-                        isToday={editionIdx === 0}
+                        isToday={editionIdx === editions.length - 1}
                         onGoToToday={scrollToToday}
                     />
                 </div>
@@ -106,7 +117,7 @@ function DailyEdition({ edition, isToday, onGoToToday }: DailyEditionProps) {
 
                     {isToday && (
                         <div className={styles.archiveHint}>
-                            <span>Hemeroteca (Desliza →)</span>
+                            <span>Hemeroteca (Desliza ←)</span>
                         </div>
                     )}
 

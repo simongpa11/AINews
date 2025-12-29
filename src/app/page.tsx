@@ -11,7 +11,7 @@ async function getNews() {
     .from('news')
     .select('*')
     .gte('created_at', sevenDaysAgo)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
     .order('relevance_score', { ascending: false })
 
   if (error) {
