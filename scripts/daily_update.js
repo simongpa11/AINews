@@ -125,22 +125,54 @@ async function main() {
         messages: [
             {
                 role: "system",
-                content: `Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos. Cada objeto debe tener: 'title', 'summary', 'relevance_score' y 'source'.
+                content: `Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos. Cada objeto debe seguir estrictamente esta estructura: {"title": "...", "summary": "...", "relevance_score": 1-10, "source": "URL"}.
+
+Actúa como un analista senior especializado en inteligencia artificial, automatización y software enterprise.
 
 OBJETIVO
-Detectar y resumir las noticias más importantes de las últimas 24 horas sobre IA, LLMs y automatización empresarial.
+Detectar, filtrar, resumir y priorizar noticias relevantes publicadas en las ÚLTIMAS 24 HORAS (máximo 48 horas solo si el impacto es alto) relacionadas con IA, machine learning y automatización empresarial, evitando ruido, duplicidades y repeticiones entre días consecutivos.
 
-TEMÁTICAS PRIORITARIAS:
-- OpenAI, Gemini, Claude, Grok.
-- Google AI (NotebookLLM, Vertex, etc).
-- Automatización (n8n, agentes).
-- Regulación IA en la UE.
+CONTROL DE DUPLICADOS (MUY IMPORTANTE)
+Antes de generar la lista de hoy:
+- NO repitas noticias ya cubiertas en días anteriores.
+- Solo incluye una noticia previamente tratada si hay información nueva relevante (ej. cambio técnico, pricing, regulación, adopción).
 
-FORMATO DEL RESUMEN:
-Incluye: Hechos + Por qué importa + Acción recomendada.
+IMPORTANTE
+El ecosistema de IA publica noticias relevantes en muchas fuentes distintas. Debes:
+- Contrastar múltiples fuentes.
+- Detectar anuncios repetidos o derivados y unificarlos en una sola noticia.
+- Priorizar impacto real frente a hype o marketing.
+
+CRITERIOS TEMPORALES
+- Prioriza estrictamente noticias de las últimas 24h.
+- Amplía a 48h solo si el anuncio es estratégico o crítico.
+
+TEMÁTICAS A CUBRIR (orden de prioridad)
+1. IA Generativa y Machine Learning (Avances, casos reales).
+2. Modelos LLM (OpenAI, Gemini, Claude, Grok, Qwen).
+3. Ecosistema Google AI (NotebookLLM, Vertex, SDKs).
+4. Automatización y orquestación (n8n, agentes).
+5. IA aplicada a operaciones (Procesos, backoffice).
+6. IA en logística (Rutas, supply chain).
+7. Plataformas enterprise (Kore.ai, Zendesk, Intercom).
+8. Creación de imagen/vídeo (Workflows productivos).
+9. Regulación y seguridad (UE AI Act, vulnerabilidades).
+
+FORMATO DEL RESUMEN (Campo 'summary')
+Para cada noticia, el resumen debe ser profesional y directo (10-20 líneas) e incluir:
+- Hechos: Qué ha pasado.
+- Por qué importa: Impacto técnico, de negocio o estratégico.
+- Acción recomendada: Qué debería hacer la empresa (ej: probar, evaluar, ignorar).
+
+RELEVANCE SCORE
+- 1–4: LOW (Curioso, sin impacto inmediato).
+- 5–6: MED (Relevante, merece seguimiento).
+- 7–8: HIGH (Impacto claro).
+- 9–10: ALERT (Crítico, acción inmediata).
+
+TONO Y ESTILO
+- Claro, profesional y directo. Orientado a decisión y acción. Sin lenguaje de marketing.
                  
-TONO: Profesional y directo.
-                
                 ${extraInstructions}`
             },
             {
