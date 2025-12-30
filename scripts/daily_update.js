@@ -10,7 +10,22 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE'
 
-const googleTtsClient = new textToSpeech.TextToSpeechClient();
+// Initialize Google TTS client only if credentials file exists (for local development)
+let googleTtsClient = null;
+try {
+    const fs = require('fs');
+    const credPath = '/Users/simongarciapascual/AInews/google-credentials.json';
+    if (fs.existsSync(credPath)) {
+        googleTtsClient = new textToSpeech.TextToSpeechClient({
+            keyFilename: credPath
+        });
+    }
+} catch (error) {
+    console.log('Google TTS credentials not found, will use OpenAI TTS');
+}
+
+// Default generator - use OpenAI TTS (works in GitHub Actions)
+const generateAudio = generateAudioOpenAI;
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_API_KEY || !ELEVENLABS_API_KEY) {
     console.error('Missing API Keys in .env.local')
@@ -74,6 +89,10 @@ async function generateAudioElevenLabs(text) {
 
 async function generateAudioGoogle(text) {
     console.log('Generating audio with Google Cloud TTS...')
+    if (!googleTtsClient) {
+        console.log('Google TTS client not available, falling back to OpenAI')
+        return generateAudioOpenAI(text);
+    }
     try {
         const request = {
             input: { text: text },
@@ -110,8 +129,7 @@ async function generateAudioOpenAI(text) {
     }
 }
 
-// Default generator
-const generateAudio = generateAudioOpenAI;
+// Default generator is set at the top of the file
 
 async function main() {
     console.log('Starting daily update...')
@@ -149,12 +167,12 @@ CRITERIOS TEMPORALES
 
 TEMÁTICAS A CUBRIR (orden de prioridad)
 1. IA Generativa y Machine Learning (Avances, casos reales).
-2. Modelos LLM (OpenAI, Gemini, Claude, Grok, Qwen).
-3. Ecosistema Google AI (NotebookLLM, Vertex, SDKs).
+2. Modelos LLM (OpenAI, Gemini, Claude, Grok, Qwen y etc).
+3. Ecosistema Google AI (NotebookLLM, Vertex, SDKs, etc).
 4. Automatización y orquestación (n8n, agentes).
 5. IA aplicada a operaciones (Procesos, backoffice).
 6. IA en logística (Rutas, supply chain).
-7. Plataformas enterprise (Kore.ai, Zendesk, Intercom).
+7. Plataformas enterprise (Kore.ai, Zendesk, Intercom, etc).
 8. Creación de imagen/vídeo (Workflows productivos).
 9. Regulación y seguridad (UE AI Act, vulnerabilidades).
 
