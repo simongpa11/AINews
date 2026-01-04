@@ -10,22 +10,49 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const ELEVENLABS_VOICE_ID = '7QQzpAyzlKTVrRzQJmTE'
 
-// Initialize Google TTS client only if credentials file exists (for local development)
+// Initialize Google TTS client
+// Supports both local file credentials and GitHub Actions environment variable
 let googleTtsClient = null;
 try {
     const fs = require('fs');
-    const credPath = '/Users/simongarciapascual/AInews/google-credentials.json';
-    if (fs.existsSync(credPath)) {
+    const path = require('path');
+
+    // Try environment variable first (for GitHub Actions)
+    if (process.env.GOOGLE_CREDENTIALS_JSON) {
+        console.log('Using Google credentials from environment variable');
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
         googleTtsClient = new textToSpeech.TextToSpeechClient({
-            keyFilename: credPath
+            credentials: credentials
         });
     }
+    // Fall back to local file (for local development)
+    else {
+        const credPath = path.join(__dirname, '..', 'google-credentials.json');
+        if (fs.existsSync(credPath)) {
+            console.log('Using Google credentials from file');
+            googleTtsClient = new textToSpeech.TextToSpeechClient({
+                keyFilename: credPath
+            });
+        }
+    }
 } catch (error) {
-    console.log('Google TTS credentials not found, will use OpenAI TTS');
+    console.log('Google TTS credentials not available:', error.message);
 }
 
-// Default generator - use OpenAI TTS (works in GitHub Actions)
-const generateAudio = generateAudioOpenAI;
+// Default generator - use Google TTS with OpenAI fallback
+const generateAudio = generateAudioWithFallback;
+
+async function generateAudioWithFallback(text) {
+    try {
+        if (googleTtsClient) {
+            const audio = await generateAudioGoogle(text);
+            if (audio) return audio;
+        }
+    } catch (e) {
+        console.log('Google TTS failed, trying OpenAI:', e.message);
+    }
+    return generateAudioOpenAI(text);
+}
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_API_KEY || !ELEVENLABS_API_KEY) {
     console.error('Missing API Keys in .env.local')
@@ -90,8 +117,8 @@ async function generateAudioElevenLabs(text) {
 async function generateAudioGoogle(text) {
     console.log('Generating audio with Google Cloud TTS...')
     if (!googleTtsClient) {
-        console.log('Google TTS client not available, falling back to OpenAI')
-        return generateAudioOpenAI(text);
+        console.log('Google TTS client not available')
+        return null;
     }
     try {
         const request = {
@@ -105,9 +132,10 @@ async function generateAudioGoogle(text) {
         };
 
         const [response] = await googleTtsClient.synthesizeSpeech(request);
+        console.log('✓ Google TTS succeeded');
         return response.audioContent;
     } catch (error) {
-        console.error('Error generating audio with Google:', error)
+        console.error('✗ Google TTS failed:', error.message)
         return null
     }
 }
@@ -148,7 +176,7 @@ async function main() {
 Actúa como un analista senior especializado en inteligencia artificial, automatización y software enterprise.
 
 OBJETIVO
-Detectar, filtrar, resumir y priorizar noticias relevantes publicadas en las ÚLTIMAS 24 HORAS (máximo 48 horas solo si el impacto es alto) relacionadas con IA, machine learning y automatización empresarial, evitando ruido, duplicidades y repeticiones entre días consecutivos.
+Detectar, filtrar, resumir y priorizar noticias relevantes publicadas ${process.env.TARGET_DATE ? `el día ${process.env.TARGET_DATE}` : 'en las ÚLTIMAS 24 HORAS'} (máximo 48 horas solo si el impacto es alto) relacionadas con IA, machine learning y automatización empresarial, evitando ruido, duplicidades y repeticiones entre días consecutivos.
 
 CONTROL DE DUPLICADOS (MUY IMPORTANTE)
 Antes de generar la lista de hoy:
@@ -266,7 +294,8 @@ TONO Y ESTILO
         }
 
         // Insert into DB
-        await supabase.from('news').insert({
+        // Insert into DB
+        const insertData = {
             title: item.title,
             summary: item.summary,
             content: item.summary,
@@ -274,13 +303,19 @@ TONO Y ESTILO
             audio_url: publicAudioUrl,
             relevance_score: item.relevance_score || 7,
             original_url: item.source || 'https://news.google.com'
-        })
+        }
+
+        if (process.env.TARGET_DATE) {
+            insertData.created_at = new Date(process.env.TARGET_DATE).toISOString()
+        }
+
+        await supabase.from('news').insert(insertData)
     }
 
     // 4. Save podcast metadata
     if (podcastUrl) {
         const { error: metaError } = await supabase.from('daily_metadata').insert({
-            date: new Date().toISOString().split('T')[0],
+            date: process.env.TARGET_DATE || new Date().toISOString().split('T')[0],
             podcast_url: podcastUrl,
             podcast_script: podcastScript
         })
