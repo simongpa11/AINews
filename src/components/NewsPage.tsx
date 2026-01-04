@@ -1,6 +1,6 @@
 import { News } from '@/types'
 import Image from 'next/image'
-import { Play, Bookmark, Pause, Bell, Link, Lightbulb } from 'lucide-react'
+import { Play, Bookmark, Pause, Bell, Link, Lightbulb, ChevronLeft, ExternalLink } from 'lucide-react'
 import styles from './NewsPage.module.css'
 import { forwardRef, useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -18,6 +18,7 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
     const sourcesRef = useRef<HTMLDivElement | null>(null)
     const [showFolderSelector, setShowFolderSelector] = useState(false)
     const [showSources, setShowSources] = useState(false)
+    const [showFullArticle, setShowFullArticle] = useState(false)
 
     // Close sources popover when clicking outside
     useEffect(() => {
@@ -241,10 +242,46 @@ const NewsPage = forwardRef<HTMLDivElement, NewsPageProps>(({ newsItem, pageNumb
 
             {/* 8 & 9. Footer con Link */}
             <div className={styles.articleFooter}>
-                <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.fullArticleLink}>
+                <button
+                    onClick={() => setShowFullArticle(true)}
+                    className={styles.fullArticleLink}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 20px' }}
+                >
                     Leer artículo completo →
-                </a>
+                </button>
             </div>
+
+            {/* FULL ARTICLE INTERFACE */}
+            {showFullArticle && (
+                <div className={styles.fullArticleOverlay}>
+                    <div className={styles.fullArticleHeader}>
+                        <button className={styles.closeButton} onClick={() => setShowFullArticle(false)}>
+                            <ChevronLeft size={20} /> Volver
+                        </button>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>
+                            {new Date(newsItem.created_at).toLocaleDateString()}
+                        </span>
+                    </div>
+
+                    <div className={styles.fullArticleContent}>
+                        <h1 className={styles.fullArticleTitle}>{newsItem.title}</h1>
+
+                        <div className={styles.fullArticleImageContainer}>
+                            <Image src={newsItem.image_url!} alt={newsItem.title} fill className={styles.fullArticleImage} />
+                        </div>
+
+                        <div className={styles.articleBody}>
+                            {newsItem.content || newsItem.summary}
+                        </div>
+
+                        <div className={styles.fullArticleFooter}>
+                            <a href={newsItem.original_url} target="_blank" rel="noopener noreferrer" className={styles.sourceLinkBtn}>
+                                <ExternalLink size={16} /> Leer en fuente original
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 })

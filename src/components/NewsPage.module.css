@@ -334,3 +334,142 @@
     }
 
 }
+
+/* Full Article Overlay */
+.fullArticleOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    font-family: 'Merriweather', serif;
+    color: #333;
+    animation: slideUpOverlay 0.3s ease-out;
+}
+
+@keyframes slideUpOverlay {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fullArticleHeader {
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.closeButton {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: #002E7D;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.closeButton:hover {
+    background: #f1f5f9;
+}
+
+.fullArticleContent {
+    padding: 30px 20px;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+    background: transparent;
+}
+
+.fullArticleTitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: #1a202c;
+    margin-bottom: 24px;
+    line-height: 1.3;
+    font-weight: 800;
+}
+
+.fullArticleImageContainer {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.fullArticleImage {
+    object-fit: cover;
+}
+
+.articleBody {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #334155;
+    white-space: pre-wrap;
+    /* Preserves newlines */
+}
+
+.fullArticleFooter {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.sourceLinkBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #002E7D;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 10px 20px;
+    background: #eff6ff;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.sourceLinkBtn:hover {
+    background: #dbeafe;
+}
+
+@media (max-width: 600px) {
+    .fullArticleTitle {
+        font-size: 1.7rem;
+    }
+
+    .fullArticleImageContainer {
+        height: 220px;
+    }
+
+    .articleBody {
+        font-size: 1.05rem;
+    }
+}

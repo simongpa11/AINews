@@ -171,7 +171,7 @@ async function main() {
         messages: [
             {
                 role: "system",
-                content: `Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos. Cada objeto debe seguir estrictamente esta estructura: {"title": "...", "summary": "...", "relevance_score": 1-10, "source": "URL"}.
+                content: `Debes devolver un objeto JSON con un campo 'news_items' que sea un array de objetos. Cada objeto debe seguir estrictamente esta estructura: {"title": "...", "summary": "...", "content": "...", "relevance_score": 1-10, "source": "URL"}.
 
 Actúa como un analista senior especializado en inteligencia artificial, automatización y software enterprise.
 
@@ -209,6 +209,14 @@ Para cada noticia, el resumen debe ser profesional y directo (10-20 líneas) e i
 - Hechos: Qué ha pasado.
 - Por qué importa: Impacto técnico, de negocio o estratégico.
 - Acción recomendada: Qué debería hacer la empresa (ej: probar, evaluar, ignorar).
+
+FORMATO DEL ARTÍCULO EXTENSO (Campo 'content')
+Debes generar un artículo detallado (entre 40 y 100 líneas) para cada noticia.
+- Profundiza en los aspectos técnicos y de negocio.
+- Explica el "Cómo" y el "Por qué" en detalle.
+- Usa párrafos claros.
+- Manten un tono periodístico y experto.
+- NO incluyas markdown, solo texto plano con saltos de línea (\n).
 
 RELEVANCE SCORE
 - 1–4: LOW (Curioso, sin impacto inmediato).
@@ -298,7 +306,7 @@ TONO Y ESTILO
         const insertData = {
             title: item.title,
             summary: item.summary,
-            content: item.summary,
+            content: item.content || item.summary, // Use generated content or fallback to summary
             image_url: publicImageUrl,
             audio_url: publicAudioUrl,
             relevance_score: item.relevance_score || 7,
