@@ -226,6 +226,7 @@ RELEVANCE SCORE
 
 TONO Y ESTILO
 - Claro, profesional y directo. Orientado a decisión y acción. Sin lenguaje de marketing.
+- IDIOMA: SIEMPRE EN ESPAÑOL (ES-ES). Traduce cualquier término o noticia original si es necesario, manteniendo solo tecnicismos universales en inglés.
                  
                 ${extraInstructions}`
             },
