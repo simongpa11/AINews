@@ -124,14 +124,28 @@ function DailyEdition({ edition, isToday, onGoToToday }: DailyEditionProps) {
                     <h1>Noticias IA Diarias</h1>
                     <p>{new Date(edition.date).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
 
-                    {podcastUrl && (
-                        <button className={styles.podcastButton} onClick={handlePodcastToggle}>
-                            <div className={styles.podcastIconWrapper}>
-                                {isPodcastPlaying ? <Pause size={24} /> : <Headphones size={24} />}
-                            </div>
-                            <span>{isPodcastPlaying ? 'Pausar Podcast' : 'Escuchar Podcast'}</span>
-                        </button>
-                    )}
+                    <button
+                        className={styles.podcastButton}
+                        onClick={handlePodcastToggle}
+                        disabled={!podcastUrl || edition.news.length === 0}
+                        style={{
+                            opacity: (!podcastUrl || edition.news.length === 0) ? 0.5 : 1,
+                            cursor: (!podcastUrl || edition.news.length === 0) ? 'not-allowed' : 'pointer',
+                            background: (!podcastUrl || edition.news.length === 0) ? '#e2e8f0' : undefined
+                        }}
+                    >
+                        <div className={styles.podcastIconWrapper}>
+                            {isPodcastPlaying ? <Pause size={24} /> : <Headphones size={24} />}
+                        </div>
+                        <span>
+                            {!podcastUrl
+                                ? 'Podcast no disponible'
+                                : edition.news.length === 0
+                                    ? 'Sin noticias hoy'
+                                    : isPodcastPlaying ? 'Pausar Podcast' : 'Escuchar Podcast'
+                            }
+                        </span>
+                    </button>
 
                     <div className={styles.scrollHint}>
                         <span>Desliza para leer</span>
