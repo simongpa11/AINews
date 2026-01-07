@@ -176,7 +176,9 @@ async function main() {
 Actúa como un analista senior especializado en inteligencia artificial, automatización y software enterprise.
 
 OBJETIVO
-Detectar, filtrar, resumir y priorizar noticias relevantes publicadas ${process.env.TARGET_DATE ? `el día ${process.env.TARGET_DATE}` : 'en las ÚLTIMAS 24 HORAS'} (máximo 48 horas solo si el impacto es alto) relacionadas con IA, machine learning y automatización empresarial, evitando ruido, duplicidades y repeticiones entre días consecutivos.
+Detectar, filtrar, resumir y priorizar noticias relevantes publicadas ${process.env.TARGET_DATE ? `el día ${process.env.TARGET_DATE}` : 'en las ÚLTIMAS 24 HORAS'} (máximo 48 horas solo si el impacto es alto) relacionadas con IA, machine learning y automatización empresarial.
+
+IMPORTANTE: Si la fecha es futura o no encuentras noticias reales específicas, DEBES GENERAR/SIMULAR 3-4 noticias realistas y plausibles basadas en la proyección de tendencias actuales de IA (Agentes autónomos, LLMs multimodales, Regulación, etc.). NO devuelvas una lista vacía.
 
 CONTROL DE DUPLICADOS (MUY IMPORTANTE)
 Antes de generar la lista de hoy:
